@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CH_Feedback" Id="{6a9d3331-e3b5-4ef2-b574-157425a03b33}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_Feedback IMPLEMENTS I_CH_Feedback
+VAR
+    {attribute 'hide'}
+    _hr : HRESULT;
+    {attribute 'hide'}
+    _activeCommand : STRING;
+    {attribute 'hide'}
+    _lastCommandAccepted : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="ActiveCommand" Id="{74521113-d3e6-42d6-8a1b-a1225eeed223}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY ActiveCommand : STRING;]]></Declaration>
+      <Get Name="Get" Id="{241f0b04-d6dc-4afe-9bc5-533a1095c670}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ActiveCommand := THIS^._ActiveCommand;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1790ab83-c2a7-4cf5-91a4-51db97f4ee7b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[THIS^._ActiveCommand 		:= ActiveCommand;
+//THIS^._LastAcceptedCommand	:= TRUE;  // Removed in V1.1]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Busy" Id="{01704ce5-65dd-4c2c-b20c-13bf4474c34e}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Busy : BOOL]]></Declaration>
+      <Get Name="Get" Id="{99d85667-79a5-494f-aeda-392fec898af6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy := (THIS^._hr = S_PENDING);]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{da44fe38-e379-4f2a-ac80-c1293b193b88}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF Busy THEN
+	THIS^._hr := S_PENDING;
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Done" Id="{20f4ad69-fdf5-4a2d-9604-a94943430c26}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Done : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b433dda0-c90b-4df3-b1f6-534c10364c62}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Done := NOT THIS^.Busy AND NOT THIS^.Error;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{a69bc1a9-c1ce-48ad-a483-909bd72ada41}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF Done THEN
+	THIS^._hr := S_OK;
+END_IF
+
+
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Error" Id="{d2c042f0-ea4a-4b25-8fab-282ca7de8e19}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{d01adf4c-d18f-41f2-9d8b-fd589c9d89a2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := FAILED(THIS^._hr);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorId" Id="{94be652c-ba64-43ae-9c5f-478f83c78d25}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY ErrorId : UDINT]]></Declaration>
+      <Get Name="Get" Id="{ecf1382a-c3f1-4c69-b75c-4bc1b9f010f9}">
+        <Declaration><![CDATA[VAR
+	
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ErrorId := DWORD_TO_UDINT(DINT_TO_DWORD(THIS^._hr) AND 16#0000FFFF); //only return the last two byte with the error Id
+
+
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{a670d4d7-e02d-48f5-8576-a476559beda9}">
+        <Declaration><![CDATA[VAR
+	//A failed execution is indicated by a NEGATIVE code, or in hexadecimal notation the first digit is >= 8.
+	nErrorCodeSign : UDINT := 16#80000000;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF ErrorId <> 0 THEN
+	THIS^._hr := TO_DINT(nErrorCodeSign + ErrorId);
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="HR" Id="{68cd560a-cd72-4c04-a4de-6c22be82bafb}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY HR : HRESULT]]></Declaration>
+      <Get Name="Get" Id="{f0abf468-a3ed-4ca4-b2a3-86a823f6ba3f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[HR := THIS^._hr;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c24caa40-a92f-4289-b7a6-8bc6130608c4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[THIS^._hr := HR;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LastCommandAccepted" Id="{05357f24-a216-401e-9798-610ac1492caf}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY LastCommandAccepted : BOOL]]></Declaration>
+      <Get Name="Get" Id="{aa5265f1-5a0b-49e1-ac72-c6db37deaf16}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LastCommandAccepted := THIS^._lastCommandAccepted;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d6d60754-5d24-43c9-a93e-b94807c87f0c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[THIS^._lastCommandAccepted := LastCommandAccepted;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

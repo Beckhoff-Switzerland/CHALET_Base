@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_CH_LIST" Id="{d81cb508-fdd5-4139-a740-4def79be0c9c}">
+    <Declaration><![CDATA[INTERFACE I_CH_LIST
+]]></Declaration>
+    <Method Name="FindLUID" Id="{b1c63aa2-f24f-4f14-9da7-0d917025b72e}">
+      <Declaration><![CDATA[METHOD PUBLIC FindLUID : I_CH_OBJECT
+VAR_INPUT
+	sLUID	: STRING;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="FindOID" Id="{0f77295a-574e-4005-8b7a-219431a3336f}">
+      <Declaration><![CDATA[METHOD FindOID : I_CH_OBJECT
+VAR_INPUT
+	oOID	: OTCID;
+END_VAR]]></Declaration>
+    </Method>
+    <Method Name="FindOIDString" Id="{56977772-656e-4bac-acda-b7157561a0a9}">
+      <Declaration><![CDATA[METHOD FindOIDString : I_CH_OBJECT
+VAR_INPUT
+	sOID	: STRING;
+END_VAR]]></Declaration>
+    </Method>
+    <Method Name="GetNextObject" Id="{1c7b796b-f015-453e-ad77-33118df7f431}">
+      <Declaration><![CDATA[METHOD PUBLIC GetNextObject : I_CH_Object
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="GetRandomObject" Id="{c3d5e421-67b1-44a7-8dc5-765066f5a1a3}">
+      <Declaration><![CDATA[METHOD GetRandomObject : I_CH_Object
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="HasNextObject" Id="{594b4e43-9d17-49e3-8008-0d53d7e8f475}">
+      <Declaration><![CDATA[METHOD PUBLIC HasNextObject : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="IsEmpty" Id="{d3abda63-2a30-4497-96f0-7df6765ad498}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC IsEmpty : BOOL]]></Declaration>
+      <Get Name="Get" Id="{79cb8286-ac05-4e44-a30e-a9d78018dbd0}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="IsFull" Id="{6c230d12-db05-4952-a351-45df63272d31}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC IsFull : BOOL]]></Declaration>
+      <Get Name="Get" Id="{70af465e-62e3-43fc-9513-246efd9b9f1a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="ResetIterator" Id="{bab1e98b-f88f-4090-a6c9-84a76c2767bd}">
+      <Declaration><![CDATA[METHOD PUBLIC ResetIterator : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Size" Id="{b6426dfa-8408-4c4c-946b-84af6c72a15a}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC Size : UDINT]]></Declaration>
+      <Get Name="Get" Id="{1b00da5e-dad4-4d63-8d1e-dacc49874e60}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

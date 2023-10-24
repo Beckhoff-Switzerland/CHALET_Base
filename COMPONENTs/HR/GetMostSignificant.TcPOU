@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="GetMostSignificant" Id="{33afdf83-bc7d-46f0-a34b-d1dea84bb256}" SpecialFunc="None">
+    <Declaration><![CDATA[(*
+	Return the most significant HRESULT input (hr1 or hr2).
+	Example: if hr1:= S_Pending and hr2 := S_OK, then return S_Pending 
+	Priority:(Error(incl. code) > Error(empty code) > S_WATCHDOGTIMEOUT > S_PENDING > S_FALSE > S_OK)
+*)
+FUNCTION GetMostSignificant : HRESULT
+VAR_INPUT
+	hr1 : HRESULT; //top priority if both hr1 and hr2 have an error code return this
+	hr2 : HRESULT; //second priority if both hr1 and hr2 have an error code return hr1
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//hr1 has an Error(incl. errorcode) 
+IF hr1.31 AND ((TO_DWORD(hr1) AND 16#FFF) > 0) THEN
+	GetMostSignificant := hr1;
+
+//hr2 has an Error(incl. errorcode) 
+ELSIF hr2.31 AND ((TO_DWORD(hr2) AND 16#FFF) > 0) THEN
+	GetMostSignificant := hr2;
+
+//hr1 has an Error(empty errorcode)
+ELSIF hr1.31 THEN
+	GetMostSignificant := hr1;
+
+//hr2 has an Error(empty errorcode)
+ELSIF hr2.31 THEN
+	GetMostSignificant := hr2;
+	
+//hr1 has a higher SUCCESS code than hr2. (S_WATCHDOGTIMEOUT > S_PENDING > S_FALSE > S_OK)
+ELSIF hr1 >= hr2 THEN
+	GetMostSignificant := hr1;
+
+//hr2 has a higher SUCCESS code than hr1. (S_WATCHDOGTIMEOUT > S_PENDING > S_FALSE > S_OK)
+ELSE 
+	GetMostSignificant := hr2;	
+	
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

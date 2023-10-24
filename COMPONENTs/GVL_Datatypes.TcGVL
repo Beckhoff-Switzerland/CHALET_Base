@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="GVL_Datatypes" Id="{a5718695-4e1c-470b-88fe-2169a912e3f3}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	// SINT
+	cMaxSint	: SINT 		:= 127; // Largest SINT number
+    cMinSint	: SINT 		:= -128; // Smallest SINT number
+
+	// USINT
+	cMaxUsint	: USINT 	:= 255; // Largest USINT number
+    cMinUSint	: USINT 	:= 0; // Smallest USINT number
+
+	// INT
+	cMaxInt		: INT 		:= 32_767; // Largest INT number
+    cMinInt		: INT 		:= -32_768; // Smallest INT number
+
+	// UINT
+	cMaxUint	: UINT 		:= 65_535; // Largest UINT number
+    cMinUnit	: UINT 		:= 0; // Smallest UINT number
+
+	// DINT
+	cMaxDint	: DINT 		:= 2_147_483_647; // Largest DINT number
+    cMinDint	: DINT 		:= -2_147_483_648; // Smallest DINT number
+
+	// UDINT
+	cMaxUdint	: UDINT 	:= 4_294_967_295; // Largest UDINT number
+    cMinUdint	: UDINT		:= 0; // Smallest UDINT number
+
+	// LINT
+	cMaxLint	: LINT 		:= 9_223_372_036_854_775_807; // Largest LINT number
+    cMinBLint	: LINT 		:= -9_223_372_036_854_775_808; // Smallest LINT number
+
+	// ULINT
+	cMaxUlint	: ULINT 	:= 18_446_744_073_709_551_615; // Largest ULINT number
+    cMinUlint	: ULINT 	:= 0; // Smallest ULINT number
+
+	// BYTE
+	cMaxByte	: BYTE 		:= 255; // Largest BYTE number
+    cMinByte	: BYTE 		:= 0; // Smallest BYTE number
+
+	// WORD
+	cMaxWord	: WORD 		:= 65_535; // Largest WORD number
+    cMinWord	: WORD 		:= 0; // Smallest WORD number
+
+	// DWORD
+	cMaxDword	: DWORD 	:= 4_294_967_295; // Largest DWORD number
+    cMinDword	: DWORD 	:= 0; // Smallest DWORD number
+
+	// LWORD
+	cMaxLword	: LWORD 	:= 18_446_744_073_709_551_615; // Largest LWORD number
+    cMinLword	: LWORD 	:= 0; // Smallest LWORD number
+	
+	// REAL
+	cMaxReal	: REAL 		:= 3.402823E+38; // Largest REAL number
+    cMinReal	: REAL 		:= -3.402823E+38; // Smallest REAL number
+	
+	// LREAL
+    cMaxLreal	: LREAL 	:= 1.7976931348623157E+308; // Largest LREAL number
+    cMinLreal	: LREAL 	:= -1.7976931348623157E+308; // Smallest LREAL number
+	
+    // DATE
+    cMaxDate   	: DATE    	:= DATE#2106-2-7; // Maximum DATA
+    cMinDate   	: DATE     	:= DATE#1970-1-1; // Minimum DATE
+	
+	// TIME
+	cMaxTime	: TIME  	:= T#49D17H2M47S295MS; // Longest TIME duration
+	cMinTime 	: TIME  	:= TO_TIME(0);	// Shortest TIME duration
+	
+	// LTIME
+	cMaxLtime	: LTIME 	:= LTIME#213503D23H34M33S709MS551US615NS; // Longest LTIME duration
+	cMinLtime 	: LTIME  	:= TO_LTIME(0); // Shortest LTIME duration
+	
+    // Date and time
+    cMaxDataAndTime  : DATE_AND_TIME  := DATE_AND_TIME#2106-02-07-06:28:15; // Maximum DATA_AND_DATE
+    cMinDataAndTime  : DATE_AND_TIME  := DATE_AND_TIME#1970-1-1-0:0:0; // Minimum DATA_AND_DATE
+
+    // Time of day
+    cMaxTimeOfDay 	: TIME_OF_DAY    := TIME_OF_DAY#23:59:59.999; // Largest TIME_OF_DAY
+    cMinTimeOfDay 	: TIME_OF_DAY    := TIME_OF_DAY#0:0:0; // Smallest TIME_OF_DAY
+
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

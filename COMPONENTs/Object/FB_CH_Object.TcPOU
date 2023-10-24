@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CH_Object" Id="{409d828e-23b5-4a9e-a56a-5036375242c4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_Object IMPLEMENTS I_CH_Object
+VAR
+	fbSourceInfo : FB_TcSourceInfo;
+	
+	{attribute 'hide'}
+	nTaskIndex : BYTE; //Used in TwinCAT_SystemInfoVarList._TaskInfo
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FB_init" Id="{0fae9e54-ec66-40c1-b480-f848bab32e25}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+VAR
+	fbGetCurTaskIdx  : GETCURTASKINDEX;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbGetCurTaskIdx();
+THIS^.nTaskIndex := fbGetCurTaskIdx.Index;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{be8a023b-6296-4807-8e60-e5a7f80de0fd}">
+      <Declaration><![CDATA[METHOD Initialize : HRESULT
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Initialize := S_OK;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="LUID" Id="{474686ea-ffab-47fd-a05b-420d3e45ce29}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY LUID : STRING //Locally unique identifier]]></Declaration>
+      <Get Name="Get" Id="{c098fcbe-8b71-42a1-b28d-abed1ec65b4b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LUID := THIS^.fbSourceInfo.sName;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="OID" Id="{e3dde703-13aa-48d9-895b-2f28dd4ec172}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY OID : OTCID //Object ID]]></Declaration>
+      <Get Name="Get" Id="{3291e80a-1091-4808-a53b-7a3c33206193}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[OID := 0;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="TaskIndex" Id="{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}">
+      <Declaration><![CDATA[PROPERTY PROTECTED TaskIndex : BYTE //Used in TwinCAT_SystemInfoVarList._TaskInfo]]></Declaration>
+      <Get Name="Get" Id="{5482258d-f630-44e1-8f58-c8cf236fbd5d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TaskIndex := THIS^.nTaskIndex;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Update" Id="{803c0f33-543c-4185-9957-af53704b5468}">
+      <Declaration><![CDATA[METHOD Update : HRESULT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Update := S_OK;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

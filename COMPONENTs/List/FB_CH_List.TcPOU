@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CH_List" Id="{af82aebc-49fb-4481-993c-d70fe342fe7b}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_List IMPLEMENTS I_CH_LIST
+VAR
+	{attribute 'hide'}
+	nObjectCount			: UDINT;
+	{attribute 'hide'}
+	nIdxNextObject			: UDINT;
+	aObjects				: ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="ID" Id="{a6143771-4de3-44c7-bc68-b4e2d35fd4bb}" />
+    <Folder Name="Iterator" Id="{7b049406-fe3d-42b5-89c1-7ebd8af337c7}" />
+    <Folder Name="List" Id="{efee0648-7eeb-4629-a7ed-ed0883e34030}" />
+    <Folder Name="Object" Id="{a7ed3d9e-a61a-4f2c-ab17-a49e9491f215}" />
+    <Method Name="AddObject" Id="{ba744631-6ed0-4654-afee-3bfb932f232e}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC AddObject : HRESULT
+VAR_INPUT
+	iChObject	: I_CH_Object;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
+	AddObject := S_FALSE;
+	RETURN;
+END_IF
+
+IF iChObject = 0 THEN
+	AddObject := S_FALSE;
+	RETURN;
+END_IF
+
+nObjectCount := nObjectCount + 1;
+aObjects[nObjectCount] := iChObject;
+
+AddObject := S_OK;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Clear" Id="{73a02d65-2240-453e-a05b-659da650929d}" FolderPath="List\">
+      <Declaration><![CDATA[METHOD PUBLIC Clear : BOOL
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR nIdx := 1 TO BaseParameterlist.MAX_OBJECTS DO
+	aObjects[nIdx] := NULL;
+END_FOR
+
+nObjectCount	:= 0;
+nIdxNextObject	:= 0;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Duplicate" Id="{36ff03d9-f7f5-49fd-857d-d99230d76119}" FolderPath="List\">
+      <Declaration><![CDATA[METHOD Duplicate : BOOL
+VAR_INPUT
+	CopyFrom : I_CH_LIST;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.Clear();
+
+// Invalide input
+IF CopyFrom = 0 THEN
+	Duplicate := FALSE;;
+	RETURN;
+END_IF
+
+// This list is to small
+IF CopyFrom.Size > BaseParameterlist.MAX_OBJECTS THEN
+	Duplicate := FALSE;;
+	RETURN;
+END_IF
+
+
+
+CopyFrom.ResetIterator();
+WHILE CopyFrom.HasNextObject() DO
+	THIS^.AddObject(CopyFrom.GetNextObject());
+END_WHILE
+
+Duplicate := TRUE;
+
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FindLUID" Id="{bc53e504-4d0c-4529-99d5-eee1f228239e}" FolderPath="ID\">
+      <Declaration><![CDATA[METHOD PUBLIC FindLUID : I_CH_OBJECT
+VAR_INPUT
+	sLUID	: STRING;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR nIdx := 1 TO nObjectCount DO
+	IF aObjects[nIdx] <> 0 AND_THEN aObjects[nIdx].LUID = sLUID THEN
+		FindLUID := aObjects[nIdx];
+		EXIT;
+	END_IF
+END_FOR
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FindObject" Id="{ecb05561-854b-4c37-ad37-3931b803da52}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC FindObject : BOOL
+VAR_INPUT
+	iChObject	: I_CH_Object;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx] = iChObject THEN
+		FindObject := TRUE;
+		EXIT;
+	END_IF
+END_FOR
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FindOID" Id="{dcfd7f35-5592-4006-a139-3f9b322e26fc}" FolderPath="ID\">
+      <Declaration><![CDATA[METHOD FindOID : I_CH_OBJECT
+VAR_INPUT
+	oOID	: OTCID;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR nIdx := 1 TO nObjectCount DO
+	IF aObjects[nIdx] <> 0 AND_THEN aObjects[nIdx].OID = oOID THEN
+		FindOID := aObjects[nIdx];
+		EXIT;
+	END_IF
+END_FOR
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FindOIDString" Id="{bd44922b-450f-4b2f-bff7-d80428deade7}" FolderPath="ID\">
+      <Declaration><![CDATA[METHOD FindOIDString : I_CH_OBJECT
+VAR_INPUT
+	sOID	: STRING;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR nIdx := 1 TO nObjectCount DO
+	IF aObjects[nIdx] <> 0 AND_THEN DWORD_TO_HEXSTR(TO_DWORD(aObjects[nIdx].OID),0,FALSE) = sOID THEN
+		FindOIDString := aObjects[nIdx];
+		EXIT;
+	END_IF
+END_FOR
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNextObject" Id="{9ac6a4ec-048a-41e7-8a25-6c35c5ccb4d9}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC GetNextObject : I_CH_Object
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nIdxNextObject := nIdxNextObject + 1;
+
+
+IF nIdxNextObject > nObjectCount THEN
+	//Error!
+	//Todo: Errormessage
+	GetNextObject := 0;
+	RETURN;
+END_IF
+
+
+
+
+GetNextObject := aObjects[nIdxNextObject];
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetRandomObject" Id="{059b06dd-1f8b-4613-91de-50b7deb695fa}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD GetRandomObject : I_CH_Object
+VAR_INPUT
+END_VAR
+
+VAR_INST
+	{attribute 'hide'}
+	fbDRAN : DRAND;
+END_VAR
+
+VAR
+	nRandomIdx : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check if not Empty
+IF UDINT_TO_BOOL(nObjectCount) THEN
+	// Generate number 0..1
+	fbDRAN(Seed:= 42);
+	
+	// 1..Size   = ((0..1)*(Size-1))+1
+	nRandomIdx := LREAL_TO_UDINT(fbDRAN.Num * (nObjectCount-1))+1;
+	
+	GetRandomObject := aObjects[nRandomIdx];
+	
+END_IF
+
+
+
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HasNextObject" Id="{f8cb30ca-df34-4d67-85ef-f037614e067b}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC HasNextObject : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[HasNextObject := (nIdxNextObject < nObjectCount);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{0433ca42-cba8-4876-af3c-f03841c3e69c}" FolderPath="List\">
+      <Declaration><![CDATA[METHOD Initialize : HRESULT //This method calls the respective Initialize method of all contained objects
+VAR_INPUT
+END_VAR
+VAR
+	hr : HRESULT;
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//FOR each element
+FOR nIdx := 1 TO nObjectCount DO
+	// DO Init
+	hr := GetMostSignificant(hr, aObjects[nIdx].Initialize());
+END_FOR
+
+
+Initialize := hr;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="IsEmpty" Id="{a58263fb-723e-4a96-8e1d-0843aa6cf381}" FolderPath="List\">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC IsEmpty : BOOL]]></Declaration>
+      <Get Name="Get" Id="{47ab9808-3a1b-42c6-af29-c8e033e56da7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsEmpty := (nObjectCount = 0);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="IsFull" Id="{13a50413-ac00-484b-9332-500f70a60fe9}" FolderPath="List\">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC IsFull : BOOL]]></Declaration>
+      <Get Name="Get" Id="{f560e3e3-ef8b-4ce8-b600-b0a9539508a0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsFull := (nObjectCount = BaseParameterlist.MAX_OBJECTS);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="RemoveObject" Id="{2fbae86e-dd36-4e65-be68-63238054e89a}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC RemoveObject : BOOL
+VAR_INPUT
+	iChObject	: I_CH_Object;
+END_VAR
+
+VAR
+	nIdx			: UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RemoveObject := FALSE;
+
+IF iChObject = 0 THEN
+	RETURN;
+END_IF
+
+IF NOT THIS^.FindObject(iChObject) THEN
+	RETURN;
+END_IF
+
+FOR nIdx := 1 TO nObjectCount DO
+	IF aObjects[nIdx] = iChObject THEN
+		aObjects[nIdx] := NULL;	
+		
+		nObjectCount := nObjectCount - 1;
+		
+		// Fill up the empty slot
+		MEMMOVE(ADR(aObjects[nIdx]), ADR(aObjects[nIdx + 1]), SIZEOF(aObjects[nIdx]) * (BaseParameterlist.MAX_OBJECTS - nIdx));
+	
+		RemoveObject := TRUE;
+		EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetIterator" Id="{cf281138-b754-4d58-b0fb-8bfa602e34ce}" FolderPath="Iterator\">
+      <Declaration><![CDATA[METHOD PUBLIC ResetIterator : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nIdxNextObject := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Size" Id="{525ee8bc-7c1a-4cc4-9f59-cbf67c4a00b1}" FolderPath="List\">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY PUBLIC Size : UDINT]]></Declaration>
+      <Get Name="Get" Id="{4583acbd-69b9-4373-8a95-f8bfb667dce5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Size := nObjectCount;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Update" Id="{d0b62ac1-d7ee-4878-a622-e34d7fd6ea2d}" FolderPath="List\">
+      <Declaration><![CDATA[METHOD Update : HRESULT //This method calls the respective update method of all contained objects
+VAR
+	hr : HRESULT;
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//FOR each element
+FOR nIdx := 1 TO nObjectCount DO
+	// DO Update
+	hr := GetMostSignificant(hr, aObjects[nIdx].Update());
+END_FOR
+
+Update := hr;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

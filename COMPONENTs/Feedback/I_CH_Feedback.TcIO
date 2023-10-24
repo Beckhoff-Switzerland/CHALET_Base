@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <Itf Name="I_CH_Feedback" Id="{e7001247-0ea0-44e7-8a10-0148763e45be}">
+    <Declaration><![CDATA[INTERFACE I_CH_Feedback
+]]></Declaration>
+    <Property Name="ActiveCommand" Id="{87d5a97f-9f1e-481c-ac4f-9ce2bc4658fc}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY ActiveCommand : STRING;]]></Declaration>
+      <Get Name="Get" Id="{ff4bce71-14ad-40f9-a4ea-d1b9c7dc8553}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Busy" Id="{e64c5651-45b7-44a7-8096-598750de617d}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Busy : BOOL]]></Declaration>
+      <Get Name="Get" Id="{48de42ee-7ad9-44ac-a12b-b1c0dd606d06}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Done" Id="{c0882c9d-86d6-457c-b895-f5ebbe9b0698}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Done : BOOL]]></Declaration>
+      <Get Name="Get" Id="{dbb8e519-9644-41cb-8ed4-df82b5752d2c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{d32f5567-4e2f-4df1-8bb7-ada42a809e8e}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{33f037ed-4b48-41a2-a2ab-8435c6a202b4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ErrorId" Id="{c00421a0-ed93-4365-ad08-65279199b4b3}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY ErrorId : UDINT]]></Declaration>
+      <Get Name="Get" Id="{c81aa01f-9faf-464c-88fc-a2816d223bed}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="HR" Id="{1a127474-ef94-4ce0-946f-5bb47c6892b2}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY HR : HRESULT]]></Declaration>
+      <Get Name="Get" Id="{fd06fdab-8ab6-42cb-bca7-7d1ea6b4429f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="LastCommandAccepted" Id="{4013f9d7-2d32-42fc-a185-3b9fbcdcec54}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY LastCommandAccepted : BOOL]]></Declaration>
+      <Get Name="Get" Id="{cc5c6ddc-1986-4b0b-9978-f5f8052dbbe0}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="CheckOk" Id="{61f2d040-0588-4303-9eb6-4a66f7a53b42}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION CheckOk : BOOL
+VAR_INPUT
+	hr : HRESULT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CheckOk := (hr = S_OK);]]></ST>
+    </Implementation>
+    <LineIds Name="CheckOk">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
