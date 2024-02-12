@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_AdsAddr" Id="{18279f44-fbe6-4ebb-8976-868ddae2bc22}">
+    <Declaration><![CDATA[INTERFACE I_AdsAddr
+]]></Declaration>
+    <Property Name="NetId" Id="{e8ac5ac4-0807-4420-a1ca-07ef4666c853}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY NetId : T_AmsNetID ]]></Declaration>
+      <Get Name="Get" Id="{9781502f-5cfc-4463-938e-9980bd1c58ef}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Port" Id="{fcde7741-8a7f-4078-acba-893ed034d6cb}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Port : WORD]]></Declaration>
+      <Get Name="Get" Id="{b1a17193-afa5-4eab-a1d1-28dfbf5adb0d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

@@ -29,13 +29,13 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[THIS^._ActiveCommand 		:= ActiveCommand;
-//THIS^._LastAcceptedCommand	:= TRUE;  // Removed in V1.1]]></ST>
+          <ST><![CDATA[THIS^._ActiveCommand 		:= ActiveCommand;]]></ST>
         </Implementation>
       </Set>
     </Property>
     <Property Name="Busy" Id="{01704ce5-65dd-4c2c-b20c-13bf4474c34e}">
       <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+(* Indicates a busy command, i.e. command is being processed, waiting for execution, or already executing (= also active). *)
 PROPERTY Busy : BOOL]]></Declaration>
       <Get Name="Get" Id="{99d85667-79a5-494f-aeda-392fec898af6}">
         <Declaration><![CDATA[VAR
@@ -58,6 +58,7 @@ END_IF]]></ST>
     </Property>
     <Property Name="Done" Id="{20f4ad69-fdf5-4a2d-9604-a94943430c26}">
       <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+(* Indicates the command is done, i.e. execution of the command finished successfully. *)
 PROPERTY Done : BOOL]]></Declaration>
       <Get Name="Get" Id="{b433dda0-c90b-4df3-b1f6-534c10364c62}">
         <Declaration><![CDATA[VAR
@@ -83,6 +84,7 @@ END_IF
     </Property>
     <Property Name="Error" Id="{d2c042f0-ea4a-4b25-8fab-282ca7de8e19}">
       <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+(* Indicates the command has an error. *)
 PROPERTY Error : BOOL]]></Declaration>
       <Get Name="Get" Id="{d01adf4c-d18f-41f2-9d8b-fd589c9d89a2}">
         <Declaration><![CDATA[VAR
@@ -95,6 +97,7 @@ END_VAR
     </Property>
     <Property Name="ErrorId" Id="{94be652c-ba64-43ae-9c5f-478f83c78d25}">
       <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+(* Indicates the error id of the command error. *)
 PROPERTY ErrorId : UDINT]]></Declaration>
       <Get Name="Get" Id="{ecf1382a-c3f1-4c69-b75c-4bc1b9f010f9}">
         <Declaration><![CDATA[VAR
@@ -104,8 +107,10 @@ END_VAR
         <Implementation>
           <ST><![CDATA[ErrorId := DWORD_TO_UDINT(DINT_TO_DWORD(THIS^._hr) AND 16#0000FFFF); //only return the last two byte with the error Id
 
-
-]]></ST>
+//515 means busy and is not an Error
+IF ErrorId = 515 THEN
+	ErrorId := 0;
+END_IF]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{a670d4d7-e02d-48f5-8576-a476559beda9}">

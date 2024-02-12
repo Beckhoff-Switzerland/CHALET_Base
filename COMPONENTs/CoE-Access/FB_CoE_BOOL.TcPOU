@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CoE_BOOL" Id="{39f45e7f-99b3-4c6d-85c8-6844d97afae2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CoE_BOOL EXTENDS FB_CoE_Base
+VAR
+	{attribute 'hide'}
+	nValue : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="cbBufLen" Id="{0c3b03b7-8c5c-4263-ace7-67211946fa0d}">
+      <Declaration><![CDATA[PROPERTY PROTECTED cbBufLen : UDINT]]></Declaration>
+      <Get Name="Get" Id="{58fd5a02-248a-45b5-b759-878688930a86}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[cbBufLen := SIZEOF(nValue);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="pSrcBuf" Id="{ca7780d4-d12c-4c60-bb25-77e193818342}">
+      <Declaration><![CDATA[PROPERTY PROTECTED pSrcBuf : PVOID]]></Declaration>
+      <Get Name="Get" Id="{23feec92-1dc1-4516-8f37-7d87db9553af}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[pSrcBuf := ADR(nValue);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Value" Id="{9f999cbd-c82b-44b4-83d8-0ced22c86797}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Value : BOOL]]></Declaration>
+      <Get Name="Get" Id="{27a32eac-dcf3-4079-8c3e-be11721e5732}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Value := nValue;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{80186fa5-0caa-4310-9c1f-c5c11d17ab56}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[nValue := Value;
+
+//Trigger a new write cycle
+THIS^.bWriteDone 	:= FALSE;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

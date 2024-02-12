@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CoE_Connection" Id="{5633bf7b-4c62-4a21-ad36-53d7ae848ce2}" SpecialFunc="None">
+    <Declaration><![CDATA[(* This FB must be instantiated once per EtherCat slave. 
+It is used to generate the PLC process image required to read the ADS address + port from the terminal. 
+This information is then transferred to the individual FBs for the registers *)
+FUNCTION_BLOCK  FB_CoE_Connection IMPLEMENTS I_AdsAddr
+VAR
+	AdsAddr AT %I* : AMSADDR;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Mapped" Id="{a4c5ad9d-cede-4691-b84a-6292636d7fa3}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Mapped : BOOL]]></Declaration>
+      <Get Name="Get" Id="{e66d5686-3f4f-406b-8682-408491caba9c}">
+        <Declaration><![CDATA[VAR
+	bNotMapped : BOOL;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bNotMapped := F_GetMappingStatus(ADR(THIS^.AdsAddr), SIZEOF(THIS^.AdsAddr)) <> EPlcMappingStatus.MS_Mapped;
+
+Mapped := NOT bNotMapped;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="NetId" Id="{5b5e3c1a-2a1d-4f6b-b2c9-20ac12e28ace}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY NetId : T_AmsNetID ]]></Declaration>
+      <Get Name="Get" Id="{b267be94-3784-48d4-ab9c-fc86d491e357}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[//Convert number to string
+NetId := F_CreateAmsNetId( AdsAddr.netId );]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Port" Id="{a2beda3e-3c74-43f6-b794-66b3259f512a}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Port : WORD]]></Declaration>
+      <Get Name="Get" Id="{07479704-b2f1-4f08-8472-d0a5ad82c65a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Port := AdsAddr.port;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+  </POU>
+</TcPlcObject>

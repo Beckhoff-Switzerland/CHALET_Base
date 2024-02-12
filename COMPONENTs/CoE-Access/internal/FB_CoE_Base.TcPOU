@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CoE_Base" Id="{50a12035-bd44-4cb7-8c1e-6773c8895771}" SpecialFunc="None">
+    <Declaration><![CDATA[(* This FB is abstract and is the base class  *)
+FUNCTION_BLOCK ABSTRACT FB_CoE_Base EXTENDS FB_CH_Object
+VAR
+	//Coe Connector
+	{attribute 'hide'}
+	ipCoeConnection	: I_AdsAddr;
+	{attribute 'hide'}
+	bErrorInvalideInterface : BOOL;
+	
+	//Parameter index
+	{attribute 'hide'}
+    nIndex     : WORD; (* CoE Object Index *)
+	{attribute 'hide'}
+    nSubIndex  : BYTE; (* Subindex of CoE Object *)
+
+	//Read/write 
+	{attribute 'hide'}
+	bReadDone : BOOL;
+	{attribute 'hide'}
+	fbCoeRead : FB_EcCoeSdoRead;
+	{attribute 'hide'}
+	nSeqRead : UINT;
+	{attribute 'hide'}
+	bReadError : BOOL;
+	
+	{attribute 'hide'}
+	bWriteDone : BOOL := TRUE;
+	{attribute 'hide'}
+	fbCoeWrite : FB_EcCoeSdoWrite;
+	{attribute 'hide'}
+	nSeqWrite : UINT;
+	{attribute 'hide'}
+	bWriteError : BOOL;
+	
+	{attribute 'hide'}
+	fbDelayOnError : TON := ( PT:= T#10S);
+END_VAR
+VAR_STAT
+	nCtsCoeObject : UDINT;
+	nCtsReadActive : UDINT;
+	nCtsWriteActive : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="internal" Id="{9b2bd295-ac47-4e29-bf77-4134b4f1e82c}" />
+    <Property Name="cbBufLen" Id="{278de7e2-4661-4c8c-b981-6ab8adf5db6d}" FolderPath="internal\">
+      <Declaration><![CDATA[PROPERTY PROTECTED ABSTRACT cbBufLen : UDINT]]></Declaration>
+      <Get Name="Get" Id="{284be9f1-f919-4325-836c-fd47d0ef8849}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{49f566c8-8b2e-4c13-bd4e-25371ae87603}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{debca941-7c09-4136-b97f-bbe53c9dd686}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := THIS^.bReadError OR THIS^.bWriteError OR THIS^.bErrorInvalideInterface;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="FB_init" Id="{7c27d49f-8509-4aa4-9429-c2977115d451}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	
+	ipCoeConnection	: I_AdsAddr;
+    nIndex     : WORD; 	(* CoE Object Index *)
+    nSubIndex  : BYTE; 		(* Subindex of CoE Object *)
+END_VAR
+
+VAR_INST
+	{attribute 'hide'}
+	bFBInitCalledOnce : BOOL; //Do the following code once during start up and not during onlinechange
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Do the following code once during start up and not during onlinechange
+IF NOT bFBInitCalledOnce THEN 
+	nCtsCoeObject := nCtsCoeObject +1;
+	
+	THIS^.ipCoeConnection := ipCoeConnection;
+	THIS^.nIndex 		:= nIndex;
+	THIS^.nSubIndex 	:= nSubIndex;
+END_IF
+
+bFBInitCalledOnce := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Index" Id="{982873f5-956d-4c49-a84c-fdb21817f6df}" FolderPath="internal\">
+      <Declaration><![CDATA[PROPERTY PRIVATE Index : WORD ]]></Declaration>
+      <Get Name="Get" Id="{80980c4d-5d24-495f-bba1-f7c807b9d5c1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="pSrcBuf" Id="{4b82e701-9595-4f3d-847f-3556246e1c14}" FolderPath="internal\">
+      <Declaration><![CDATA[PROPERTY PROTECTED ABSTRACT pSrcBuf : PVOID]]></Declaration>
+      <Get Name="Get" Id="{0262a41e-42d0-491c-a083-c350db548f84}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ReadDone" Id="{d0485c38-c226-4821-aeee-8a97c3ae70ef}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY ReadDone : BOOL]]></Declaration>
+      <Get Name="Get" Id="{1e60bc60-9b0f-402e-92b5-e0c6be23ee9d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReadDone := bReadDone;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{35d5f300-383e-4bac-bae0-c5e38bf43153}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[//Only allow set to FALSE
+IF NOT ReadDone THEN
+	bReadDone := FALSE;
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="SubIndex" Id="{69f2460e-b727-47e9-a8fb-31ae6c4b3e94}" FolderPath="internal\">
+      <Declaration><![CDATA[PROPERTY PRIVATE SubIndex : BYTE]]></Declaration>
+      <Get Name="Get" Id="{c7b1decf-8538-4824-b2e8-159a0174381b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Update" Id="{6755fc6d-3a63-4c72-8203-79b6f834e177}">
+      <Declaration><![CDATA[METHOD Update : HRESULT
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ipCoeConnection = 0 THEN
+	bErrorInvalideInterface := TRUE;
+	RETURN;
+END_IF
+
+
+(*--- Read ---*)
+CASE nSeqRead OF
+	0: //Start/Restart if required
+		IF NOT bReadDone  AND bWriteDone(* Write has higher priority*) AND (nCtsReadActive < BaseParameterlist.MAX_COE_READ) AND (nSeqWrite = 0) THEN
+			fbCoeRead.bExecute := TRUE; // Rising edge	
+			nCtsReadActive := nCtsReadActive +1;	
+			nSeqRead := 1;
+		END_IF
+	
+	1: //Check if done or error
+		IF fbCoeRead.bError THEN
+			//Error
+			nSeqRead := 99;
+			bReadError := TRUE;
+			fbDelayOnError.IN := TRUE;
+			nCtsReadActive := nCtsReadActive -1;	
+			
+		ELSIF NOT fbCoeRead.bBusy AND NOT fbCoeRead.bError THEN
+			//Done
+			THIS^.bReadDone := TRUE;
+			nSeqRead := 0;
+			bReadError := FALSE;
+			nCtsReadActive := nCtsReadActive -1;	
+		END_IF	
+		
+	99: // Delay on error to reduce amount of errors
+		IF fbDelayOnError.Q THEN
+			fbDelayOnError.IN := FALSE;
+			nSeqRead := 0;
+		END_IF
+END_CASE
+
+IF NOT THIS^.bReadDone THEN
+	fbCoeRead(
+		sNetId		:= ipCoeConnection.NetId,
+		nSlaveAddr	:= ipCoeConnection.port,
+		nSubIndex	:= THIS^.nSubIndex, 
+		nIndex		:= THIS^.nIndex, 
+		pDstBuf		:= THIS^.pSrcBuf, 
+		cbBufLen	:= THIS^.cbBufLen);
+		
+	//Prepare for next rising edge
+	fbCoeRead.bExecute := FALSE;
+END_IF
+
+
+
+(*--- Write ---*)
+CASE nSeqWrite OF
+	0: //Start/Restart if required
+		IF NOT bWriteDone AND (nCtsWriteActive < BaseParameterlist.MAX_COE_WRITE) AND (nSeqRead = 0) THEN
+			fbCoeWrite.bExecute := TRUE; // Rising edge	
+			nCtsWriteActive := nCtsWriteActive +1;	
+			nSeqWrite := 1;
+		END_IF
+	
+	1: //Check if done or error
+		IF fbCoeWrite.bError THEN
+			//Error
+			nSeqWrite := 99;
+			bWriteError := TRUE;
+			fbDelayOnError.IN := TRUE;
+			nCtsWriteActive := nCtsWriteActive -1;	
+			
+		ELSIF NOT fbCoeWrite.bBusy AND NOT fbCoeWrite.bError THEN
+			//Done
+			THIS^.bWriteDone := TRUE;
+			nSeqWrite := 0;
+			bWriteError := FALSE;
+			nCtsWriteActive := nCtsWriteActive -1;	
+		END_IF	
+		
+	99: // Delay on error to reduce amount of errors
+		IF fbDelayOnError.Q THEN
+			fbDelayOnError.IN := FALSE;
+			nSeqWrite := 0;
+		END_IF		
+
+END_CASE
+
+IF NOT bWriteDone THEN
+	fbCoeWrite(
+		sNetId		:= ipCoeConnection.netId, 
+		nSlaveAddr	:= ipCoeConnection.port,
+		nSubIndex	:= THIS^.nSubIndex, 
+		nIndex		:= THIS^.nIndex, 
+		pSrcBuf		:= THIS^.pSrcBuf, 
+		cbBufLen	:= THIS^.cbBufLen);		
+		
+	//Prepare for next rising edge
+	fbCoeWrite.bExecute := FALSE;
+END_IF
+
+//Update
+fbDelayOnError();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="WriteDone" Id="{940011eb-3d39-420d-bbe7-872c3a01f3c9}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY WriteDone : BOOL]]></Declaration>
+      <Get Name="Get" Id="{2e5d18ab-a426-47ef-a259-33775fa4355e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WriteDone := bWriteDone;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1c54235c-8ace-4a9f-a8e5-9ab143e89aac}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[//Only allow set to FALSE
+IF NOT WriteDone THEN
+	bWriteDone := FALSE;
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

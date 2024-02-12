@@ -5,6 +5,14 @@
 VAR_GLOBAL CONSTANT
 	(*Maximum length of List*)
 	MAX_OBJECTS 			: UDINT := 150;
+	
+	(*Maximum CoE-Read at same time*)
+	MAX_COE_READ 			: UDINT := 20;
+	
+	(*Maximum CoE-Write at same time*)
+	MAX_COE_WRITE 			: UDINT := 20;
+	
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

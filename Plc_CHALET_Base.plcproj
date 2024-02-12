@@ -18,7 +18,7 @@
     <Company>Beckhoff CH</Company>
     <Released>false</Released>
     <Title>CHALET_BaseComponents</Title>
-    <ProjectVersion>3.0.0</ProjectVersion>
+    <ProjectVersion>3.2.1</ProjectVersion>
     <DeploymentEvents>
       <Events xmlns="">
         <Event>
@@ -32,15 +32,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="COMPONENTs" />
+    <Folder Include="COMPONENTs\CoE-Access\internal" />
     <Folder Include="COMPONENTs\Feedback" />
     <Folder Include="COMPONENTs\HR" />
     <Folder Include="COMPONENTs\List" />
+    <Folder Include="COMPONENTs\CoE-Access" />
     <Folder Include="COMPONENTs\Object" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseParameterlist.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\FB_CoE_BYTE.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\FB_CoE_Connection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\FB_CoE_UINT.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\FB_CoE_UDINT.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\FB_CoE_BOOL.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\internal\FB_CoE_Base.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\CoE-Access\internal\I_AdsAddr.TcIO">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="COMPONENTs\Feedback\FB_CH_Feedback.TcPOU">
       <SubType>Code</SubType>
@@ -81,6 +104,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <PlaceholderReference Include="Tc2_EtherCAT">
+      <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_EtherCAT</Namespace>
+    </PlaceholderReference>
     <PlaceholderReference Include="Tc2_Standard">
       <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Standard</Namespace>

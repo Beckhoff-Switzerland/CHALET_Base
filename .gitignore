@@ -1,4 +1,4 @@
-# [void*.ers] - TwinCAT CHALET V1.1
+# [void*.ers] - TwinCAT CHALET V1.4
 
 # Visual Studio
 **/.vs/
@@ -29,12 +29,16 @@
 
 # TwinCAT 
 **/_Boot/
-**/_Config/
+# **/_Config/
 *.tclrs
 *.bin
 *.bak
 *.tpy
 *.tmc
+# But not these files...
+!/TMC/*
+
+
 *.tmcRefac
 
 # Online Change sources
@@ -43,9 +47,9 @@ LineIDs.dbg
 
 
 # Libraries
-**/_Libraries/
+**/_Libraries/*
 # But not these files...
-!/_Libraries/beckhoff ch/
+!**/_Libraries/beckhoff ch/
 
 
 # TwinCAT HMI related

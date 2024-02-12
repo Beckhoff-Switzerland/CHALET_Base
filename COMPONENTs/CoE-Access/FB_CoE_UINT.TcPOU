@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CoE_UINT" Id="{c27c62dd-3346-46fc-9883-0e031ca0a44d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CoE_UINT EXTENDS FB_CoE_Base
+(* 
+   FB_init:
+	(	ipCoeConnection := fbCoeConnection, (*each EC-Slave needs one FB_CoE_Connection*)
+		nIndex     		:= 16#8010, (* CoE Object Index *)
+		nSubIndex  		:= 16#11 (* Subindex of CoE Object *));
+ *)
+VAR
+	{attribute 'hide'}
+	nValue : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="cbBufLen" Id="{416f0dc3-b439-4928-aa9a-9b8428e7bbd5}">
+      <Declaration><![CDATA[PROPERTY PROTECTED cbBufLen : UDINT]]></Declaration>
+      <Get Name="Get" Id="{5d909c92-6645-44c2-b650-2d490bf1f390}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[cbBufLen := SIZEOF(nValue);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="pSrcBuf" Id="{bf987af5-d941-4559-888b-3f709f3f8146}">
+      <Declaration><![CDATA[PROPERTY PROTECTED pSrcBuf : PVOID]]></Declaration>
+      <Get Name="Get" Id="{ca7e6833-baf3-4ad8-a76f-f3b779e8dd3a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[pSrcBuf := ADR(nValue);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Value" Id="{1fc2bfab-3af1-44c2-9a91-755340384697}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Value : UINT]]></Declaration>
+      <Get Name="Get" Id="{ceaaf1da-d6be-402a-b354-8223d0807707}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Value := nValue;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d992b438-4849-4d9b-b7e8-1c6dcc197b2e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[nValue := Value;
+
+//Trigger a new write cycle
+THIS^.bWriteDone 	:= FALSE;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>
