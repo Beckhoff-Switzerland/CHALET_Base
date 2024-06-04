@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_CoE_UDINT" Id="{55914a18-518f-42a6-bc2d-cfab9bc5befe}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_CoE_UDINT EXTENDS FB_CoE_Base
+    <Declaration><![CDATA[{attribute 'no_explicit_call' := 'Do not call the body - Stick to OOP'}
+FUNCTION_BLOCK FB_CoE_UDINT EXTENDS FB_CoE_Base
 (* 
    FB_init:
 	(	ipCoeConnection := fbCoeConnection, (*each EC-Slave needs one FB_CoE_Connection*)

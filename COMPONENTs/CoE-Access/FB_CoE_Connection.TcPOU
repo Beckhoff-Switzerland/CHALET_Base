@@ -4,6 +4,7 @@
     <Declaration><![CDATA[(* This FB must be instantiated once per EtherCat slave. 
 It is used to generate the PLC process image required to read the ADS address + port from the terminal. 
 This information is then transferred to the individual FBs for the registers *)
+{attribute 'no_explicit_call' := 'Do not call the body - Stick to OOP'}
 FUNCTION_BLOCK  FB_CoE_Connection IMPLEMENTS I_AdsAddr
 VAR
 	AdsAddr AT %I* : AMSADDR;
