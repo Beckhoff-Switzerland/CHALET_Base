@@ -9,14 +9,16 @@
     </Method>
     <Property Name="LUID" Id="{0a8cefee-5069-4827-8218-849224d67929}">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
-PROPERTY LUID : STRING //Locally unique identifier]]></Declaration>
+//Locally unique identifier
+PROPERTY LUID : STRING ]]></Declaration>
       <Get Name="Get" Id="{00c396d8-9d3e-4897-bdf9-5c6a0bb194fe}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
     <Property Name="OID" Id="{b43449ff-a0c9-4fe7-9dd9-24b5b0a7d8e6}">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
-PROPERTY OID : OTCID //Object ID]]></Declaration>
+//Object ID
+PROPERTY OID : OTCID ]]></Declaration>
       <Get Name="Get" Id="{2f46fd06-50e6-48ce-97a4-ffb4d8af9760}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>

@@ -3,6 +3,9 @@
   <POU Name="FB_CH_Object" Id="{409d828e-23b5-4a9e-a56a-5036375242c4}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_Object IMPLEMENTS I_CH_Object
 VAR
+	(* The SourceInfo is created internally as the default behavior. 
+	It then contains the symbol name of the function block that instances FB_TcMessage as SourceName and the object ID of the PLC instance as SourceID.
+	If the instance of FB_TcMessage is hidden with the attribute "hide", no symbol name can be created internally for the default behavior. *)
 	fbSourceInfo : FB_TcSourceInfo;
 	
 	{attribute 'hide'}
@@ -35,7 +38,8 @@ THIS^.nTaskIndex := fbGetCurTaskIdx.Index;]]></ST>
     </Method>
     <Property Name="LUID" Id="{474686ea-ffab-47fd-a05b-420d3e45ce29}">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
-PROPERTY LUID : STRING //Locally unique identifier]]></Declaration>
+//Locally unique identifier
+PROPERTY LUID : STRING ]]></Declaration>
       <Get Name="Get" Id="{c098fcbe-8b71-42a1-b28d-abed1ec65b4b}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -47,7 +51,8 @@ END_VAR
     </Property>
     <Property Name="OID" Id="{e3dde703-13aa-48d9-895b-2f28dd4ec172}">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
-PROPERTY OID : OTCID //Object ID]]></Declaration>
+//Unique object ID
+PROPERTY OID : OTCID ]]></Declaration>
       <Get Name="Get" Id="{3291e80a-1091-4808-a53b-7a3c33206193}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -58,7 +63,8 @@ END_VAR
       </Get>
     </Property>
     <Property Name="TaskIndex" Id="{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}">
-      <Declaration><![CDATA[PROPERTY PROTECTED TaskIndex : BYTE //Used in TwinCAT_SystemInfoVarList._TaskInfo]]></Declaration>
+      <Declaration><![CDATA[//Used in TwinCAT_SystemInfoVarList._TaskInfo
+PROPERTY PROTECTED TaskIndex : BYTE ]]></Declaration>
       <Get Name="Get" Id="{5482258d-f630-44e1-8f58-c8cf236fbd5d}">
         <Declaration><![CDATA[VAR
 END_VAR

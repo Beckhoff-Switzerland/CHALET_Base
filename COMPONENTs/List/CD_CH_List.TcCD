@@ -27,11 +27,11 @@
                   <v n="isInoutVar">false</v>
                   <v n="isLocalVar">true</v>
                   <v n="bIsMethod">false</v>
-                  <v n="AttribtueName">"aiChObjects"</v>
+                  <v n="AttribtueName">"aObjects"</v>
                   <v n="AttributeConstraint">""</v>
                   <v n="AttributeReturnType">"ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object"</v>
                   <v n="AttributeParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
-                  <v n="AttributeObjectGuid">{d70bdf12-ee1a-4176-966e-7fcb5883e6b5}</v>
+                  <v n="AttributeObjectGuid">{d004cc28-db16-457f-bfc3-1d7d1bd5b7f5}</v>
                   <v n="AttributeStereotype">""</v>
                 </o>
                 <o>
@@ -55,9 +55,23 @@
                   <v n="isInoutVar">false</v>
                   <v n="isLocalVar">false</v>
                   <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"IsFull"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"BOOL"</v>
+                  <v n="AttributeParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
+                  <v n="AttributeObjectGuid">{13a50413-ac00-484b-9332-500f70a60fe9}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
                   <v n="AttribtueName">"Size"</v>
                   <v n="AttributeConstraint">""</v>
-                  <v n="AttributeReturnType">"UINT"</v>
+                  <v n="AttributeReturnType">"UDINT"</v>
                   <v n="AttributeParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
                   <v n="AttributeObjectGuid">{525ee8bc-7c1a-4cc4-9f59-cbf67c4a00b1}</v>
                   <v n="AttributeStereotype">"Property"</v>
@@ -78,6 +92,18 @@
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
                 </o>
+                <v>059b06dd-1f8b-4613-91de-50b7deb695fa</v>
+                <o>
+                  <v n="MethodName">"GetRandomObject"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"I_CH_Object"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
+                  <v n="MethodObjectGuid">{059b06dd-1f8b-4613-91de-50b7deb695fa}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
                 <v>2fbae86e-dd36-4e65-be68-63238054e89a</v>
                 <o>
                   <v n="MethodName">"RemoveObject"</v>
@@ -93,6 +119,25 @@
                   </l>
                   <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
                   <v n="MethodObjectGuid">{2fbae86e-dd36-4e65-be68-63238054e89a}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">true</v>
+                </o>
+                <v>36ff03d9-f7f5-49fd-857d-d99230d76119</v>
+                <o>
+                  <v n="MethodName">"Duplicate"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"BOOL"</v>
+                  <l n="MethodParameter" t="ArrayList" cet="UMLMethodParameter">
+                    <o>
+                      <v n="ParameterName">"ipListCopyFrom"</v>
+                      <v n="ParameterType">"I_CH_LIST"</v>
+                      <v n="ParameterParent">{36ff03d9-f7f5-49fd-857d-d99230d76119}</v>
+                      <v n="ParameterTransfer">"in"</v>
+                    </o>
+                  </l>
+                  <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
+                  <v n="MethodObjectGuid">{36ff03d9-f7f5-49fd-857d-d99230d76119}</v>
                   <v n="MethodStereotype">""</v>
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">true</v>
@@ -178,6 +223,18 @@
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
                 </o>
+                <v>c0e73554-72a9-4fcf-ac42-2c657f276289</v>
+                <o>
+                  <v n="MethodName">"RestoreIterator"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"BOOL"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
+                  <v n="MethodObjectGuid">{c0e73554-72a9-4fcf-ac42-2c657f276289}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
                 <v>cf281138-b754-4d58-b0fb-8bfa602e34ce</v>
                 <o>
                   <v n="MethodName">"ResetIterator"</v>
@@ -198,6 +255,25 @@
                   <l n="MethodParameter" t="ArrayList" />
                   <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
                   <v n="MethodObjectGuid">{d0b62ac1-d7ee-4878-a622-e34d7fd6ea2d}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
+                <v>d78f867b-e215-47dc-8272-5375fc11c8aa</v>
+                <o>
+                  <v n="MethodName">"AddList"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"HRESULT"</v>
+                  <l n="MethodParameter" t="ArrayList" cet="UMLMethodParameter">
+                    <o>
+                      <v n="ParameterName">"ipList"</v>
+                      <v n="ParameterType">"I_CH_List"</v>
+                      <v n="ParameterParent">{d78f867b-e215-47dc-8272-5375fc11c8aa}</v>
+                      <v n="ParameterTransfer">"in"</v>
+                    </o>
+                  </l>
+                  <v n="MethodParent">{af82aebc-49fb-4481-993c-d70fe342fe7b}</v>
+                  <v n="MethodObjectGuid">{d78f867b-e215-47dc-8272-5375fc11c8aa}</v>
                   <v n="MethodStereotype">""</v>
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
@@ -267,9 +343,9 @@
                 <v n="IsElementVisible">true</v>
                 <v n="TopPosition">220</v>
                 <v n="LeftPosition">160</v>
-                <v n="WidthValue">418</v>
+                <v n="WidthValue">401</v>
                 <v n="MinWidthValue">0</v>
-                <v n="Height">292</v>
+                <v n="Height">377</v>
                 <v n="MinHeight">0</v>
                 <v n="AutomaticLayout">true</v>
                 <d n="DockingPoints" t="Hashtable" />
@@ -309,7 +385,50 @@
               <v n="ExcludedFromBuild">false</v>
               <v n="PropertiesLoaded">false</v>
               <d n="Properties" t="Hashtable" />
-              <l n="AttributesArray" t="ArrayList" />
+              <l n="AttributesArray" t="ArrayList" cet="UMLElementAttribute">
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"IsEmpty"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"BOOL"</v>
+                  <v n="AttributeParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="AttributeObjectGuid">{d3abda63-2a30-4497-96f0-7df6765ad498}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"IsFull"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"BOOL"</v>
+                  <v n="AttributeParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="AttributeObjectGuid">{6c230d12-db05-4952-a351-45df63272d31}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"Size"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"UDINT"</v>
+                  <v n="AttributeParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="AttributeObjectGuid">{b6426dfa-8408-4c4c-946b-84af6c72a15a}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
+              </l>
               <v n="PropertyID">-1</v>
               <v n="MethodsLoaded">false</v>
               <d n="MethodList" t="Hashtable" ckt="Guid" cvt="UMLElementMethod">
@@ -328,6 +447,30 @@
                   </l>
                   <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
                   <v n="MethodObjectGuid">{0f77295a-574e-4005-8b7a-219431a3336f}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
+                <v>1c7b796b-f015-453e-ad77-33118df7f431</v>
+                <o>
+                  <v n="MethodName">"GetNextObject"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"I_CH_Object"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="MethodObjectGuid">{1c7b796b-f015-453e-ad77-33118df7f431}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
+                <v>33f0a221-2302-4c17-ac96-3f011c5c97be</v>
+                <o>
+                  <v n="MethodName">"RestoreIterator"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"BOOL"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="MethodObjectGuid">{33f0a221-2302-4c17-ac96-3f011c5c97be}</v>
                   <v n="MethodStereotype">""</v>
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
@@ -351,6 +494,18 @@
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
                 </o>
+                <v>594b4e43-9d17-49e3-8008-0d53d7e8f475</v>
+                <o>
+                  <v n="MethodName">"HasNextObject"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"BOOL"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="MethodObjectGuid">{594b4e43-9d17-49e3-8008-0d53d7e8f475}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
                 <v>b1c63aa2-f24f-4f14-9da7-0d917025b72e</v>
                 <o>
                   <v n="MethodName">"FindLUID"</v>
@@ -366,6 +521,30 @@
                   </l>
                   <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
                   <v n="MethodObjectGuid">{b1c63aa2-f24f-4f14-9da7-0d917025b72e}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
+                <v>bab1e98b-f88f-4090-a6c9-84a76c2767bd</v>
+                <o>
+                  <v n="MethodName">"ResetIterator"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"BOOL"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="MethodObjectGuid">{bab1e98b-f88f-4090-a6c9-84a76c2767bd}</v>
+                  <v n="MethodStereotype">""</v>
+                  <v n="MethodParameterLength">20</v>
+                  <v n="MethodParameterTooLong">false</v>
+                </o>
+                <v>c3d5e421-67b1-44a7-8dc5-765066f5a1a3</v>
+                <o>
+                  <v n="MethodName">"GetRandomObject"</v>
+                  <v n="MethodBreakPointActive">false</v>
+                  <v n="MethodReturnType">"I_CH_Object"</v>
+                  <l n="MethodParameter" t="ArrayList" />
+                  <v n="MethodParent">{d81cb508-fdd5-4139-a740-4def79be0c9c}</v>
+                  <v n="MethodObjectGuid">{c3d5e421-67b1-44a7-8dc5-765066f5a1a3}</v>
                   <v n="MethodStereotype">""</v>
                   <v n="MethodParameterLength">20</v>
                   <v n="MethodParameterTooLong">false</v>
@@ -387,7 +566,7 @@
                 <v n="LeftPosition">160</v>
                 <v n="WidthValue">270</v>
                 <v n="MinWidthValue">0</v>
-                <v n="Height">112</v>
+                <v n="Height">241</v>
                 <v n="MinHeight">0</v>
                 <v n="AutomaticLayout">true</v>
                 <d n="DockingPoints" t="Hashtable" />

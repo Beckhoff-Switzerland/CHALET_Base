@@ -60,6 +60,13 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Method Name="RestoreIterator" Id="{33f0a221-2302-4c17-ac96-3f011c5c97be}">
+      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several white loops are placed inside each other
+METHOD PUBLIC RestoreIterator : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
     <Property Name="Size" Id="{b6426dfa-8408-4c4c-946b-84af6c72a15a}">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
 PROPERTY PUBLIC Size : UDINT]]></Declaration>

@@ -1,13 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_CH_List" Id="{af82aebc-49fb-4481-993c-d70fe342fe7b}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_List IMPLEMENTS I_CH_LIST
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_List EXTENDS FB_CH_Object IMPLEMENTS I_CH_LIST
 VAR
 	{attribute 'hide'}
 	nObjectCount			: UDINT;
 	{attribute 'hide'}
 	nIdxNextObject			: UDINT;
+	{attribute 'hide'}
+	nIdxLastRestoreValues : ARRAY [0..(MAX_CTS_RESTORE_VALUES+1)] OF UDINT;
+	{attribute 'hide'}
+	nIdxRestore				: UDINT;
 	aObjects				: ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object;
+END_VAR
+VAR CONSTANT
+	{attribute 'hide'}
+	MAX_CTS_RESTORE_VALUES : UINT := 9;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -17,14 +25,48 @@ END_VAR
     <Folder Name="Iterator" Id="{7b049406-fe3d-42b5-89c1-7ebd8af337c7}" />
     <Folder Name="List" Id="{efee0648-7eeb-4629-a7ed-ed0883e34030}" />
     <Folder Name="Object" Id="{a7ed3d9e-a61a-4f2c-ab17-a49e9491f215}" />
+    <Method Name="AddList" Id="{d78f867b-e215-47dc-8272-5375fc11c8aa}" FolderPath="List\">
+      <Declaration><![CDATA[//Add all objects from the list in to this list
+METHOD PUBLIC AddList : HRESULT
+VAR_INPUT
+	ipList	: I_CH_List;
+END_VAR
+VAR
+	hr : HRESULT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ipList = 0 THEN
+	AddList := S_FALSE;
+	RETURN;
+END_IF
+
+ipList.ResetIterator();
+WHILE ipList.HasNextObject() DO
+	hr := THIS^.AddObject(ipList.GetNextObject());
+	IF hr <> S_OK THEN
+		//Error
+		AddList := hr;
+		RETURN;
+	END_IF
+END_WHILE
+ipList.RestoreIterator();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="AddObject" Id="{ba744631-6ed0-4654-afee-3bfb932f232e}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC AddObject : HRESULT
 VAR_INPUT
 	iChObject	: I_CH_Object;
 END_VAR
-]]></Declaration>
+VAR_INST
+	{attribute 'hide'}
+	fbAlarmListFull : FB_TcAlarm;
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
+	fbAlarmListFull.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsFull, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmListFull.Raise(0);
 	AddObject := S_FALSE;
 	RETURN;
 END_IF
@@ -59,30 +101,43 @@ nIdxNextObject	:= 0;
     <Method Name="Duplicate" Id="{36ff03d9-f7f5-49fd-857d-d99230d76119}" FolderPath="List\">
       <Declaration><![CDATA[METHOD Duplicate : BOOL
 VAR_INPUT
-	CopyFrom : I_CH_LIST;
+	ipListCopyFrom : I_CH_LIST;
 END_VAR
-]]></Declaration>
+VAR
+	ipThisList : I_CH_LIST := THIS^;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[THIS^.Clear();
+        <ST><![CDATA[//New list equals this list
+IF ipListCopyFrom = ipThisList THEN
+	//Do Nothing - Successfull
+	Duplicate := TRUE;
+	RETURN;
+END_IF
+
+
+THIS^.Clear();
 
 // Invalide input
-IF CopyFrom = 0 THEN
-	Duplicate := FALSE;;
+IF ipListCopyFrom = 0 THEN
+	Duplicate := FALSE;
 	RETURN;
 END_IF
+
 
 // This list is to small
-IF CopyFrom.Size > BaseParameterlist.MAX_OBJECTS THEN
-	Duplicate := FALSE;;
+IF ipListCopyFrom.Size > BaseParameterlist.MAX_OBJECTS THEN
+	Duplicate := FALSE;
 	RETURN;
 END_IF
 
 
 
-CopyFrom.ResetIterator();
-WHILE CopyFrom.HasNextObject() DO
-	THIS^.AddObject(CopyFrom.GetNextObject());
+ipListCopyFrom.ResetIterator();
+WHILE ipListCopyFrom.HasNextObject() DO
+	THIS^.AddObject(ipListCopyFrom.GetNextObject());
 END_WHILE
+ipListCopyFrom.RestoreIterator();
+
 
 Duplicate := TRUE;
 
@@ -325,7 +380,33 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[nIdxNextObject := 0;]]></ST>
+        <ST><![CDATA[//Store the last few index for later restore if required - Shift array +1 step
+MEMMOVE(srcAddr 	:= ADR(nIdxLastRestoreValues[0]), 
+		destAddr 	:= ADR(nIdxLastRestoreValues[1]), 
+		n 			:= (SIZEOF(nIdxNextObject)*MAX_CTS_RESTORE_VALUES));
+
+//Store the last few index for later restore if required - Store last value
+nIdxLastRestoreValues[0] := nIdxNextObject;
+
+
+nIdxNextObject := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RestoreIterator" Id="{c0e73554-72a9-4fcf-ac42-2c657f276289}" FolderPath="Iterator\">
+      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several white loops are placed inside each other
+METHOD PUBLIC RestoreIterator : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Store the last few index for later restore if required - Restore
+nIdxNextObject := nIdxLastRestoreValues[0];
+
+//Store the last few index for later restore if required - Shift array -1 step
+MEMMOVE(srcAddr 	:= ADR(nIdxLastRestoreValues[1]), 
+		destAddr 	:= ADR(nIdxLastRestoreValues[0]), 
+		n 			:= (SIZEOF(nIdxNextObject)*MAX_CTS_RESTORE_VALUES));
+]]></ST>
       </Implementation>
     </Method>
     <Property Name="Size" Id="{525ee8bc-7c1a-4cc4-9f59-cbf67c4a00b1}" FolderPath="List\">

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<TcModuleClass>
+	<DataTypes>
+		<DataType>
+			<Name GUID="{EF4A30E6-04E3-4A0A-8E93-EA4F5C9FAB40}">CHALET_Base_Events</Name>
+			<DisplayName TxtId=""><![CDATA[CHALET_Base_Events]]></DisplayName>
+			<EventId>
+				<Name Id="1">ListIsFull</Name>
+				<DisplayName TxtId=""><![CDATA[List is already full and another element has been added]]></DisplayName>
+				<Severity>Critical</Severity>
+			</EventId>
+			<Hides>
+				<Hide GUID="{646AC05C-D6F8-4D85-9633-FF6C5A75B426}"/>
+				<Hide GUID="{608137E8-90FD-4526-9E9A-9881BE219F3E}"/>
+			</Hides>
+		</DataType>
+	</DataTypes>
+</TcModuleClass>
