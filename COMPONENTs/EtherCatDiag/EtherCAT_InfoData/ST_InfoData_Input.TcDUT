@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_InfoData_Input" Id="{7e3a9a3a-ce9e-4df7-bdbe-ded25463013a}">
+    <Declaration><![CDATA[TYPE ST_InfoData_Input :
+STRUCT
+	State 		: U_EtherCatState;
+	AdsAddr AT %I*	: AMSADDR;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -11,16 +11,18 @@ VAR
 	nIdxLastRestoreValues : ARRAY [0..(MAX_CTS_RESTORE_VALUES+1)] OF UDINT;
 	{attribute 'hide'}
 	nIdxRestore				: UDINT;
+	{attribute 'hide'}
 	aObjects				: ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object;
 END_VAR
 VAR CONSTANT
 	{attribute 'hide'}
-	MAX_CTS_RESTORE_VALUES : UINT := 9;
+	MAX_CTS_RESTORE_VALUES : UINT := 20;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Folder Name="Debug" Id="{259d65e2-6e1e-4033-8d69-5bc4dd4162dc}" />
     <Folder Name="ID" Id="{a6143771-4de3-44c7-bc68-b4e2d35fd4bb}" />
     <Folder Name="Iterator" Id="{7b049406-fe3d-42b5-89c1-7ebd8af337c7}" />
     <Folder Name="List" Id="{efee0648-7eeb-4629-a7ed-ed0883e34030}" />
@@ -62,16 +64,18 @@ VAR_INST
 	fbAlarmListFull : FB_TcAlarm;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
-	fbAlarmListFull.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsFull, 
-							ipSourceInfo := THIS^.fbSourceInfo, 
-							bWithConfirmation := FALSE);
-	fbAlarmListFull.Raise(0);
+        <ST><![CDATA[IF iChObject = 0 THEN
 	AddObject := S_FALSE;
 	RETURN;
 END_IF
 
-IF iChObject = 0 THEN
+
+IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
+	fbAlarmListFull.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsFull, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmListFull.ipArguments.Clear().AddStringByValue(iChObject.LUID);
+	fbAlarmListFull.Raise(0);
 	AddObject := S_FALSE;
 	RETURN;
 END_IF
@@ -98,6 +102,19 @@ nIdxNextObject	:= 0;
 ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Content" Id="{17a20f40-c58c-42c2-aa35-66426f827655}" FolderPath="Debug\">
+      <Declaration><![CDATA[//DEBUG only. View content for easy debug. Do not use this property
+{attribute 'monitoring':='call'}
+PROPERTY Content : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object]]></Declaration>
+      <Get Name="Get" Id="{d7a6b570-d748-455b-b378-9402673b3fb9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Content REF= THIS^.aObjects;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="Duplicate" Id="{36ff03d9-f7f5-49fd-857d-d99230d76119}" FolderPath="List\">
       <Declaration><![CDATA[METHOD Duplicate : BOOL
 VAR_INPUT
@@ -167,40 +184,17 @@ END_FOR
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="FindObject" Id="{ecb05561-854b-4c37-ad37-3931b803da52}" FolderPath="Object\">
-      <Declaration><![CDATA[METHOD PUBLIC FindObject : BOOL
-VAR_INPUT
-	iChObject	: I_CH_Object;
-END_VAR
-VAR
-	nIdx : UDINT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[//Check array until a match
-FOR nIdx := 1 TO THIS^.nObjectCount DO
-	IF THIS^.aObjects[nIdx] = iChObject THEN
-		FindObject := TRUE;
-		EXIT;
-	END_IF
-END_FOR
-
-
-
-]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="FindOID" Id="{dcfd7f35-5592-4006-a139-3f9b322e26fc}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD FindOID : I_CH_OBJECT
 VAR_INPUT
-	oOID	: OTCID;
+	nOID	: OTCID;
 END_VAR
 VAR
 	nIdx : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR nIdx := 1 TO nObjectCount DO
-	IF aObjects[nIdx] <> 0 AND_THEN aObjects[nIdx].OID = oOID THEN
+	IF aObjects[nIdx] <> 0 AND_THEN aObjects[nIdx].OID = nOID THEN
 		FindOID := aObjects[nIdx];
 		EXIT;
 	END_IF
@@ -339,6 +333,75 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="LUIDInList" Id="{89be4f5c-cb32-485e-87fc-ad951f5ab246}" FolderPath="ID\">
+      <Declaration><![CDATA[METHOD PUBLIC LUIDInList : BOOL
+VAR_INPUT
+	sLUID	: STRING;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx].LUID = sLUID THEN
+		LUIDInList := TRUE;
+		EXIT;
+	END_IF
+END_FOR
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ObjectInList" Id="{ecb05561-854b-4c37-ad37-3931b803da52}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD PUBLIC ObjectInList : BOOL
+VAR_INPUT
+	iChObject	: I_CH_Object;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx] = iChObject THEN
+		ObjectInList := TRUE;
+		EXIT;
+	END_IF
+END_FOR
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="OIDInList" Id="{1d43281c-110b-40c2-9c10-7cc6626d961e}" FolderPath="ID\">
+      <Declaration><![CDATA[METHOD PUBLIC OIDInList : BOOL
+VAR_INPUT
+	nOID	: OTCID;
+END_VAR
+VAR
+	nIdx : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx].OID = nOID THEN
+		OIDInList := TRUE;
+		EXIT;
+	END_IF
+END_FOR
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="RemoveObject" Id="{2fbae86e-dd36-4e65-be68-63238054e89a}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC RemoveObject : BOOL
 VAR_INPUT
@@ -355,7 +418,7 @@ IF iChObject = 0 THEN
 	RETURN;
 END_IF
 
-IF NOT THIS^.FindObject(iChObject) THEN
+IF NOT THIS^.ObjectInList(iChObject) THEN
 	RETURN;
 END_IF
 
@@ -393,7 +456,7 @@ nIdxNextObject := 0;]]></ST>
       </Implementation>
     </Method>
     <Method Name="RestoreIterator" Id="{c0e73554-72a9-4fcf-ac42-2c657f276289}" FolderPath="Iterator\">
-      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several white loops are placed inside each other
+      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several while loops are placed inside each other
 METHOD PUBLIC RestoreIterator : BOOL
 VAR_INPUT
 END_VAR

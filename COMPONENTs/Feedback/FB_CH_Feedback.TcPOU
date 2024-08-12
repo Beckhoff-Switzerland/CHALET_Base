@@ -9,6 +9,12 @@ VAR
     _activeCommand : STRING;
     {attribute 'hide'}
     _lastCommandAccepted : BOOL;
+    {attribute 'hide'}
+    fbAlarm : Tc3_EventLogger.FB_TcAlarm;	
+	{attribute 'hide'}
+	nOldErrorId : UDINT;
+	{attribute 'hide'}
+	ipSourceInfo : I_TcSourceInfo;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -29,7 +35,8 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[THIS^._ActiveCommand 		:= ActiveCommand;]]></ST>
+          <ST><![CDATA[THIS^._ActiveCommand 		:= ActiveCommand;
+]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -52,7 +59,9 @@ END_VAR
         <Implementation>
           <ST><![CDATA[IF Busy THEN
 	THIS^._hr := S_PENDING;
-END_IF]]></ST>
+END_IF
+
+THIS^.UpdateEventlogger();]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -77,6 +86,8 @@ END_VAR
 	THIS^._hr := S_OK;
 END_IF
 
+
+THIS^.UpdateEventlogger();
 
 ]]></ST>
         </Implementation>
@@ -122,10 +133,27 @@ END_VAR
         <Implementation>
           <ST><![CDATA[IF ErrorId <> 0 THEN
 	THIS^._hr := TO_DINT(nErrorCodeSign + ErrorId);
-END_IF]]></ST>
+END_IF
+
+
+THIS^.UpdateEventlogger();]]></ST>
         </Implementation>
       </Set>
     </Property>
+    <Method Name="FB_init" Id="{ab1b192a-2f19-4059-b4de-7fbf1f578a5f}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	
+	//Optional. 0 is allowed. Used for Tc3_Eventlogger
+	ipSourceInfo : I_TcSourceInfo;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.ipSourceInfo := ipSourceInfo;]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="HR" Id="{68cd560a-cd72-4c04-a4de-6c22be82bafb}">
       <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
 PROPERTY HR : HRESULT]]></Declaration>
@@ -142,7 +170,9 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[THIS^._hr := HR;]]></ST>
+          <ST><![CDATA[THIS^._hr := HR;
+
+THIS^.UpdateEventlogger();]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -167,5 +197,56 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="UpdateEventlogger" Id="{820b8977-8ae3-4cef-9fb5-0bcc7b4d79be}">
+      <Declaration><![CDATA[METHOD PROTECTED UpdateEventlogger : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//New alarm, raise
+IF (THIS^.ErrorId <> THIS^.nOldErrorId) AND THIS^.Error THEN
+	THIS^.fbAlarm.Clear(0,0);
+	THIS^.fbAlarm.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.FeedbackErrorCmd, ipSourceInfo := THIS^.ipSourceInfo, bWithConfirmation:= FALSE);
+	//Error in feedback command {0} error id {1}
+	
+
+	//Try to get some more details about error id
+	IF THIS^.HR = E_FAIL THEN
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddStringByValue('E_FAIL');
+		
+	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0000) THEN
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcSystemEventClass);
+		;//Global error codes
+			
+	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0500) THEN
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcRouterEventClass);
+		;//Router error codes
+			
+	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0700) THEN
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcGeneralAdsEventClass);
+		;//General ADS errors
+			
+	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_1000) THEN
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcRTimeEventClass);
+		;//RTime error codes
+	
+	ELSE
+		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId);
+	END_IF
+	
+
+
+
+	THIS^.fbAlarm.Raise(0);
+	
+//No alarm	
+ELSIF NOT THIS^.Error THEN
+	THIS^.fbAlarm.Clear(0,0);
+END_IF
+
+
+THIS^.nOldErrorId := THIS^.ErrorId;]]></ST>
+      </Implementation>
+    </Method>
   </POU>
 </TcPlcObject>

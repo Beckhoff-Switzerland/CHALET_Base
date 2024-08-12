@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_XtsMotorEtherCatDiag" Id="{18c58c9b-9c8f-40a5-8304-fd773cf83721}">
+    <Declaration><![CDATA[TYPE ST_XtsMotorEtherCatDiag :
+STRUCT
+	fbSource : FB_TcSourceInfo;
+	fbAlarmNotInOpMode : FB_TcAlarm;
+	fbAlarmNoCommunication : FB_TcAlarm;
+	
+	fbGetSlaveState : FB_EcGetSlaveState;
+	nLastState : BYTE;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

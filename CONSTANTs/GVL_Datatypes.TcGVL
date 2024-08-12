@@ -78,7 +78,6 @@ VAR_GLOBAL CONSTANT
     // Time of day
     cMaxTimeOfDay 	: TIME_OF_DAY    := TIME_OF_DAY#23:59:59.999; // Largest TIME_OF_DAY
     cMinTimeOfDay 	: TIME_OF_DAY    := TIME_OF_DAY#0:0:0; // Smallest TIME_OF_DAY
-
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

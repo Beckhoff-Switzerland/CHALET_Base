@@ -18,7 +18,7 @@
     <Company>Beckhoff CH</Company>
     <Released>false</Released>
     <Title>CHALET_BaseComponents</Title>
-    <ProjectVersion>3.2.5</ProjectVersion>
+    <ProjectVersion>3.4.5</ProjectVersion>
     <DeploymentEvents>
       <Events xmlns="">
         <Event>
@@ -33,11 +33,18 @@
   <ItemGroup>
     <Folder Include="COMPONENTs" />
     <Folder Include="COMPONENTs\CoE-Access\internal" />
+    <Folder Include="COMPONENTs\EtherCatDiag\EtherCAT_InfoData">
+      <ExcludeFromBuild>true</ExcludeFromBuild>
+    </Folder>
+    <Folder Include="COMPONENTs\EtherCatDiag\EtherCAT_InfoData\Subobject" />
+    <Folder Include="COMPONENTs\EtherCatDiag\Subobject" />
     <Folder Include="COMPONENTs\Feedback" />
     <Folder Include="COMPONENTs\HR" />
     <Folder Include="COMPONENTs\List" />
     <Folder Include="COMPONENTs\CoE-Access" />
+    <Folder Include="COMPONENTs\EtherCatDiag" />
     <Folder Include="COMPONENTs\Object" />
+    <Folder Include="CONSTANTs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseParameterlist.TcGVL">
@@ -65,15 +72,29 @@
     <Compile Include="COMPONENTs\CoE-Access\internal\I_AdsAddr.TcIO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\EtherCAT_InfoData\ST_InfoData_Input.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\FB_EtherCatMasterDiag.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\ST_XtsMotorEtherCatDiag.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\Subobject\E_EtherCatState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\Subobject\FB_EtherCatSlaveDiag.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="COMPONENTs\EtherCatDiag\Subobject\I_EtherCatSlaveDiag.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="COMPONENTs\Feedback\FB_CH_Feedback.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="COMPONENTs\Feedback\I_CH_Feedback.TcIO">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="COMPONENTs\GVL_Datatypes.TcGVL">
-      <SubType>Code</SubType>
-      <LinkAlways>true</LinkAlways>
     </Compile>
     <Compile Include="COMPONENTs\HR\CheckNotOk.TcPOU">
       <SubType>Code</SubType>
@@ -101,6 +122,13 @@
     </Compile>
     <Compile Include="COMPONENTs\Object\I_CH_Object.TcIO">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CONSTANTs\E_Colors_ARGB.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CONSTANTs\GVL_Datatypes.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -135,29 +163,43 @@
     </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
+    <PlaceholderResolution Include="Tc2_EtherCAT">
+      <Resolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</Resolution>
+    </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_Standard">
-      <Resolution>Tc2_Standard, 3.3.3.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_Standard, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_System">
-      <Resolution>Tc2_System, 3.4.25.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_System, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc2_Utilities">
-      <Resolution>Tc2_Utilities, 3.3.52.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_EventLogger">
-      <Resolution>Tc3_EventLogger, 3.1.30.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="Tc3_Module">
-      <Resolution>Tc3_Module, 3.3.21.0 (Beckhoff Automation GmbH)</Resolution>
+      <Resolution>Tc3_Module, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.md">
       <SubType>Content</SubType>
     </Content>
+    <None Include="Plc_CHALET_Base.tmc">
+      <SubType>Content</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PinnedGlobalDataType Include="ST_CHALET_Base_Events" />
+    <PinnedGlobalDataType Include="ST_TcGeneralAdsEventClass" />
+    <PinnedGlobalDataType Include="ST_TcRouterEventClass" />
+    <PinnedGlobalDataType Include="ST_TcRTimeEventClass" />
+    <PinnedGlobalDataType Include="ST_TcSystemEventClass" />
+  </ItemGroup>
+  <ItemGroup>
+    <SubObject Include="I_EtherCatSlaveDiag.State" />
+    <SubObject Include="I_EtherCatSlaveDiag.StateBits" />
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>

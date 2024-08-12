@@ -3,6 +3,15 @@
   <Itf Name="I_CH_LIST" Id="{d81cb508-fdd5-4139-a740-4def79be0c9c}">
     <Declaration><![CDATA[INTERFACE I_CH_LIST
 ]]></Declaration>
+    <Folder Name="Debug" Id="{3f0a098f-0460-439d-a8f7-37aa7612e213}" />
+    <Property Name="Content" Id="{fb93fbe7-0b6a-45f9-ade1-a986d6c8fe07}" FolderPath="Debug\">
+      <Declaration><![CDATA[//DEBUG only. View content for easy debug. Do not use this property
+{attribute 'monitoring':='call'}
+PROPERTY Content : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object]]></Declaration>
+      <Get Name="Get" Id="{9a56c5e0-863f-4eb7-a4ee-e4283ff43e87}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
     <Method Name="FindLUID" Id="{b1c63aa2-f24f-4f14-9da7-0d917025b72e}">
       <Declaration><![CDATA[METHOD PUBLIC FindLUID : I_CH_OBJECT
 VAR_INPUT
@@ -13,7 +22,7 @@ END_VAR
     <Method Name="FindOID" Id="{0f77295a-574e-4005-8b7a-219431a3336f}">
       <Declaration><![CDATA[METHOD FindOID : I_CH_OBJECT
 VAR_INPUT
-	oOID	: OTCID;
+	nOID	: OTCID;
 END_VAR]]></Declaration>
     </Method>
     <Method Name="FindOIDString" Id="{56977772-656e-4bac-acda-b7157561a0a9}">
@@ -54,6 +63,27 @@ PROPERTY PUBLIC IsFull : BOOL]]></Declaration>
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
+    <Method Name="LUIDInList" Id="{991f0cc3-7ee6-4a66-9716-0f0e5d809c37}">
+      <Declaration><![CDATA[METHOD PUBLIC LUIDInList : BOOL
+VAR_INPUT
+	sLUID	: STRING;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ObjectInList" Id="{e1aa04d1-835b-4b84-8b94-235211f2913d}">
+      <Declaration><![CDATA[METHOD PUBLIC ObjectInList : BOOL
+VAR_INPUT
+	iChObject	: I_CH_Object;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="OIDInList" Id="{a5f3bce5-474f-4e1c-a60e-a22084904f90}">
+      <Declaration><![CDATA[METHOD PUBLIC OIDInList : BOOL
+VAR_INPUT
+	nOID	: OTCID;
+END_VAR
+]]></Declaration>
+    </Method>
     <Method Name="ResetIterator" Id="{bab1e98b-f88f-4090-a6c9-84a76c2767bd}">
       <Declaration><![CDATA[METHOD PUBLIC ResetIterator : BOOL
 VAR_INPUT
@@ -61,7 +91,7 @@ END_VAR
 ]]></Declaration>
     </Method>
     <Method Name="RestoreIterator" Id="{33f0a221-2302-4c17-ac96-3f011c5c97be}">
-      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several white loops are placed inside each other
+      <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several while loops are placed inside each other
 METHOD PUBLIC RestoreIterator : BOOL
 VAR_INPUT
 END_VAR

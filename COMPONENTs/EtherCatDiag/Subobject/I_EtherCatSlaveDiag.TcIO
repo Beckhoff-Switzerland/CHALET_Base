@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_EtherCatSlaveDiag" Id="{c22b8fdb-74c3-4dee-8147-e32861229515}">
+    <Declaration><![CDATA[INTERFACE I_EtherCatSlaveDiag EXTENDS I_CH_Object
+]]></Declaration>
+    <Property Name="DeviceAmsAddr" Id="{e8b68077-9196-44e6-8c29-f5527535f2de}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY DeviceAmsAddr : AMSADDR]]></Declaration>
+      <Get Name="Get" Id="{333bcb7d-903a-4ff4-ab9c-0699e1aad35d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="DeviceType" Id="{61f9e6d8-4989-4abf-b931-5af916b8b1c2}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY DeviceType : STRING(15)]]></Declaration>
+      <Get Name="Get" Id="{0bf5d45a-a854-4eb5-b2fd-16b3d856abd4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Name" Id="{0f2da9ef-d821-4608-acab-0c9c40f27eea}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Name : STRING(31)]]></Declaration>
+      <Get Name="Get" Id="{dee4b2a6-a864-436c-9f39-c6e2d78eb85c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="State" Id="{42520fa4-7320-4308-b801-1f82edd5278a}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY State : E_EtherCatState]]></Declaration>
+      <Get Name="Get" Id="{97733380-447d-44f7-b0a6-e37954612816}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{3a69768c-be13-4d91-9a35-6365b82e59d5}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="StateBits" Id="{494226dd-c701-4c48-8e94-6419f4937231}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY StateBits : REFERENCE TO ST_EcSlaveStateBitsEx]]></Declaration>
+      <Get Name="Get" Id="{09ab7949-2696-4b2f-8a9e-fe1b80dd07d4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

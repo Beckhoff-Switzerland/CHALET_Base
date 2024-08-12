@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_EtherCatSlaveDiag" Id="{b3f0b2f2-27e5-4d30-a8cd-ce693baa1c15}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_EtherCatSlaveDiag EXTENDS FB_CH_Object
+VAR
+	//data of this slave
+	{attribute 'hide'}    
+	stEcSlaveConfigData : ST_EcSlaveConfigData;
+	{attribute 'hide'}    
+	stEtherCatMasterNetID : AMSNETID;
+	{attribute 'hide'}    
+	stDeviceAmsAddr : AMSADDR;
+	{attribute 'hide'}    
+	nSeqRead : UINT;
+	{attribute 'hide'}  
+	nSeqWrite : UINT;
+	{attribute 'hide'}    
+	bDoWriteState : BOOL;
+	{attribute 'hide'}    
+	bReadWasSucessfullAtLeadtOnce : BOOL;
+	{attribute 'hide'}    
+	fbEcGetSlaveState : Tc2_EtherCAT.FB_EcGetSlaveState;
+	{attribute 'hide'}    
+	fbEcSetSlaveState : Tc2_EtherCAT.FB_EcReqSlaveState;
+	{attribute 'hide'}    
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AlarmHandling" Id="{ff4ed406-7ec9-4b0c-9338-61bad592d0af}">
+      <Declaration><![CDATA[METHOD PROTECTED AlarmHandling : BOOL
+VAR	
+	bErrorNotInOp 	: BOOL;
+	bErrorNoCom 	: BOOL;
+	bWarningMissingLink : BOOL;
+	sPort		: STRING(2);
+END_VAR
+VAR_INST
+	{attribute 'hide'}  
+	fbAlarmNotInOpMode : FB_TcAlarm;
+	{attribute 'hide'}  
+	fbAlarmNotPresent : FB_TcAlarm;
+	{attribute 'hide'}  
+	fbWarningMissingLink : FB_TcAlarm;
+	{attribute 'hide'}  
+	sPortLinkMissingOld : STRING(2); 
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF THIS^.fbEcGetSlaveState.bBusy OR THIS^.fbEcGetSlaveState.bError OR NOT bReadWasSucessfullAtLeadtOnce THEN
+	// Do not check if read is active	
+	RETURN;
+	
+ELSE
+	bErrorNoCom := THIS^.StateBits.bLinkNotPresent;
+	bErrorNotInOp := NOT THIS^.StateBits.bOp AND NOT bErrorNoCom;
+	bWarningMissingLink := THIS^.StateBits.bLinkMissing;
+	
+	IF THIS^.StateBits.bPortA THEN
+		sPort := 'A';
+	ELSIF THIS^.StateBits.bPortB THEN
+		sPort := 'B';
+	ELSIF THIS^.StateBits.bPortC THEN
+		sPort := 'C';
+	ELSIF THIS^.StateBits.bPortD THEN
+		sPort := 'D';
+	ELSE
+		sPort := '';	
+		bWarningMissingLink := FALSE;
+	END_IF
+	
+	
+	
+END_IF
+
+//EcNotInOP
+IF bErrorNotInOp AND NOT fbAlarmNotInOpMode.bRaised THEN
+	fbAlarmNotInOpMode.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.EcNotInOP, ipSourceInfo := THIS^.fbSourceInfo, bWithConfirmation := FALSE);
+	//EtherCAT device {0} is not in OP Mode
+	fbAlarmNotInOpMode.ipArguments.Clear().AddStringByValue(THIS^.Name);
+	fbAlarmNotInOpMode.Raise(0);
+
+ELSIF NOT bErrorNotInOp AND fbAlarmNotInOpMode.bRaised THEN
+	fbAlarmNotInOpMode.Clear(0,0);
+END_IF
+
+//EcLinkStateNotPresent
+IF bErrorNoCom AND NOT fbAlarmNotPresent.bRaised THEN
+	fbAlarmNotPresent.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.EcLinkStateNotPresent, ipSourceInfo := THIS^.fbSourceInfo, bWithConfirmation := FALSE);
+	//No EtherCAT communication with the EtherCAT device {0}
+	fbAlarmNotPresent.ipArguments.Clear().AddStringByValue(THIS^.Name);
+	fbAlarmNotPresent.Raise(0);
+
+ELSIF NOT bErrorNoCom AND fbAlarmNotPresent.bRaised THEN
+	fbAlarmNotPresent.Clear(0,0);
+END_IF
+
+//EcMissingLink
+IF bWarningMissingLink AND NOT fbWarningMissingLink.bRaised THEN
+	fbWarningMissingLink.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.EcMissingLink, ipSourceInfo := THIS^.fbSourceInfo, bWithConfirmation := FALSE);
+	//EtherCAT Device {0} is missing connection on Port {1}
+	fbWarningMissingLink.ipArguments.Clear().AddStringByValue(THIS^.Name).AddStringByValue(sPort);
+	fbWarningMissingLink.Raise(0);
+	sPortLinkMissingOld := sPort;
+
+ELSIF (NOT bWarningMissingLink OR sPortLinkMissingOld <> sPort) AND fbWarningMissingLink.bRaised THEN
+	fbWarningMissingLink.Clear(0,0);
+END_IF
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="DeviceAmsAddr" Id="{460b5f33-c7c7-4c02-95dd-feb7d8fcc45e}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY DeviceAmsAddr : AMSADDR]]></Declaration>
+      <Get Name="Get" Id="{20178d00-9385-481b-9a59-f40a675efe24}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+DeviceAmsAddr :=  stDeviceAmsAddr;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="DeviceType" Id="{0a3a40bb-e55d-42c5-aba3-745e16b594db}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY DeviceType : STRING(15)]]></Declaration>
+      <Get Name="Get" Id="{a832584b-e871-4dcc-b7f2-b4f718bb15ae}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[DeviceType := THIS^.stEcSlaveConfigData.sType;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Name" Id="{c568312f-4e16-48af-a35a-289e8dbe1438}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Name : STRING(31)]]></Declaration>
+      <Get Name="Get" Id="{3b49929d-3229-455f-81e1-2011b6210d7c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := THIS^.stEcSlaveConfigData.sName;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="SetConfig" Id="{e9cb289b-bccd-4c16-a29c-ded218bc6300}">
+      <Declaration><![CDATA[METHOD SetConfig : BOOL
+VAR_INPUT
+	stEtherCatMasterNetID : AMSNETID;
+	stEcSlaveConfigData : ST_EcSlaveConfigData;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.stEcSlaveConfigData := stEcSlaveConfigData;
+THIS^.stEtherCatMasterNetID := stEtherCatMasterNetID;
+
+//Set name in TC3_Eventlogger
+THIS^.fbSourceInfo.sName := stEcSlaveConfigData.sName;
+
+//Same as master
+stDeviceAmsAddr.netId := THIS^.stEtherCatMasterNetID;
+
+//Set Port
+stDeviceAmsAddr.port := THIS^.stEcSlaveConfigData.nAddr;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="State" Id="{0a8514ec-3a65-48fe-aa49-7f5609396eff}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY State : E_EtherCatState]]></Declaration>
+      <Get Name="Get" Id="{cb1295be-1a7c-4cb2-8d37-c58f69106f59}">
+        <Declaration><![CDATA[VAR
+	stStateBits : ST_EcSlaveStateBitsEx;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[stStateBits := THIS^.StateBits;
+
+//Convert bit to enum
+IF stStateBits.bOp THEN
+	State := E_EtherCatState.Op;
+	
+ELSIF stStateBits.bSafeOp THEN
+	State := E_EtherCatState.SafeOp;
+	
+ELSIF stStateBits.bPreop THEN
+	State := E_EtherCatState.PreOp;
+	
+ELSIF stStateBits.bInit THEN
+	State := E_EtherCatState.Init;
+	
+ELSIF stStateBits.bError THEN
+	State := E_EtherCatState.Error;
+	
+ELSIF stStateBits.bBootStrap THEN
+	State := E_EtherCatState.BootStrap;
+	
+ELSIF stStateBits.bDisabled THEN
+	State := E_EtherCatState.Disabled;
+	
+	
+ELSE
+	//Unknown
+	State := E_EtherCatState.Unknown;	
+END_IF
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{fd0d4cc3-f36c-4151-bd11-e586ffcd6f6e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF State = E_EtherCatState.Unknown THEN
+	//Not allowed
+	RETURN;
+END_IF
+
+
+
+CASE State OF
+	E_EtherCatState.Op:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_OP;
+		bDoWriteState := TRUE;
+	
+	E_EtherCatState.SafeOp:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_SAFEOP;
+		bDoWriteState := TRUE;
+    
+	E_EtherCatState.PreOp:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_PREOP;
+		bDoWriteState := TRUE;
+    
+	E_EtherCatState.Init:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_INIT;
+		bDoWriteState := TRUE;
+    
+	E_EtherCatState.Error:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_ERROR;
+		bDoWriteState := TRUE;
+    
+	E_EtherCatState.BootStrap:
+		fbEcSetSlaveState.state := EC_DEVICE_STATE_BOOTSTRAP;
+		bDoWriteState := TRUE; 
+
+END_CASE
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="StateBits" Id="{8488d3fd-66e9-4bbc-bceb-c8a7d5404e5c}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY StateBits : REFERENCE TO ST_EcSlaveStateBitsEx]]></Declaration>
+      <Get Name="Get" Id="{3a9baaf6-d811-403d-b4aa-a7684a965156}">
+        <Declaration><![CDATA[VAR
+	stSlaveStateSource : ST_EcSlaveState;
+	stSlaveStateDest : ST_EcSlaveStateBitsEx;
+	
+	bLinkStateOk : BOOL;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[stSlaveStateSource := THIS^.fbEcGetSlaveState.state;
+
+
+//deviceState
+stSlaveStateDest.bInit 			:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_INIT);
+stSlaveStateDest.bBootStrap 	:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_BOOTSTRAP);
+stSlaveStateDest.bPreop 		:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_PREOP);
+stSlaveStateDest.bSafeOp 		:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_SAFEOP);
+stSlaveStateDest.bOp 			:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_OP);
+stSlaveStateDest.bError 		:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_ERROR);
+stSlaveStateDest.bInvVPRS 		:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_INVALID_VPRS);
+stSlaveStateDest.bInitCmdError 	:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_INITCMD_ERROR);
+stSlaveStateDest.bDisabled 		:= (stSlaveStateSource.deviceState = EC_DEVICE_STATE_DISABLED);
+
+
+//linkState multiple bits
+bLinkStateOk 						:= (stSlaveStateSource.linkState AND EC_LINK_STATE_OK) > 0;
+stSlaveStateDest.bLinkNotPresent 	:= (stSlaveStateSource.linkState AND EC_LINK_STATE_NOT_PRESENT) > 0;
+stSlaveStateDest.bLinkWithoutComm 	:= (stSlaveStateSource.linkState AND EC_LINK_STATE_LINK_WITHOUT_COMM) > 0;
+stSlaveStateDest.bLinkMissing 		:= (stSlaveStateSource.linkState AND EC_LINK_STATE_MISSING_LINK) > 0;
+stSlaveStateDest.bAdditionalLink 	:= (stSlaveStateSource.linkState AND EC_LINK_STATE_ADDITIONAL_LINK) > 0;
+stSlaveStateDest.bPortA 			:= (stSlaveStateSource.linkState AND EC_LINK_STATE_PORT_A) > 0;
+stSlaveStateDest.bPortB 			:= (stSlaveStateSource.linkState AND EC_LINK_STATE_PORT_B) > 0;
+stSlaveStateDest.bPortC 			:= (stSlaveStateSource.linkState AND EC_LINK_STATE_PORT_C) > 0;
+stSlaveStateDest.bPortD 			:= (stSlaveStateSource.linkState AND EC_LINK_STATE_PORT_D) > 0;
+
+
+StateBits REF= stSlaveStateDest;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Update" Id="{52c06401-26c2-428e-9b45-23f2bcf61a52}">
+      <Declaration><![CDATA[METHOD Update : HRESULT
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE nSeqRead OF
+	0: //start read state 
+		fbEcGetSlaveState.bExecute := TRUE;
+		nSeqRead := 1;
+		
+	1: //wait
+		IF NOT fbEcGetSlaveState.bBusy THEN
+			fbEcGetSlaveState.bExecute := FALSE;
+			nSeqRead := 0;
+		END_IF
+		IF NOT fbEcGetSlaveState.bBusy AND NOT fbEcGetSlaveState.bError THEN
+			bReadWasSucessfullAtLeadtOnce := TRUE;
+		END_IF
+		
+		
+		
+		
+		
+END_CASE
+
+CASE nSeqWrite OF
+	0: //start write state request
+		IF bDoWriteState THEN
+			fbEcSetSlaveState.bExecute := TRUE;
+			nSeqWrite := 1;
+		END_IF
+		
+	1: //wait
+		IF NOT fbEcSetSlaveState.bBusy THEN
+			fbEcSetSlaveState.bExecute := FALSE;
+			nSeqWrite := 0;
+		END_IF
+		IF NOT fbEcSetSlaveState.bBusy AND NOT fbEcSetSlaveState.bError THEN
+			bDoWriteState := FALSE;
+		END_IF
+END_CASE
+
+
+//Call subroutine
+AlarmHandling();
+
+
+
+
+fbEcGetSlaveState(
+	sNetId:= Tc2_System.F_CreateAmsNetId(nIds:= stDeviceAmsAddr.netId), 
+	nSlaveAddr:= stDeviceAmsAddr.port);
+	
+fbEcSetSlaveState(
+	sNetId:= Tc2_System.F_CreateAmsNetId(nIds:= stDeviceAmsAddr.netId), 
+	nSlaveAddr:= stDeviceAmsAddr.port);]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

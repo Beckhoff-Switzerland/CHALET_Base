@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_EtherCatMasterDiag" Id="{29a1dc5b-f2fb-4908-b610-05bb092d46ca}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'no_explicit_call' := 'Do not call the body - Stick to OOP'}
+(* This FB generates an array with all XTS motor modules. These are now checked cyclically one after the other to see whether the EtherCAT slave controller is in OP mode *)
+FUNCTION_BLOCK FB_EtherCatMasterDiag EXTENDS FB_CH_Object
+VAR
+	//Link to AMS NET ID of EtherCAT master
+	EtherCatMasterNetID AT %I* : AMSNETID;
+	fbEtherCatSlaveDiag : ARRAY [0..(BaseParameterlist.MAX_OBJECTS)] OF FB_EtherCatSlaveDiag;
+
+	
+	{attribute 'hide'}  
+	fbListOfEtherCatSlaves : FB_CH_List;
+	
+	{attribute 'hide'}  
+	bInitDone : BOOL;
+
+	{attribute 'hide'}  
+	fbGetConfSlaves : FB_EcGetConfSlaves;
+
+
+	{attribute 'hide'}  
+	stEcSlaveConfigData : ARRAY [0..(BaseParameterlist.MAX_OBJECTS)] OF ST_EcSlaveConfigData;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Initialize" Id="{0513944a-5493-4b87-a5a9-b88b14f56809}">
+      <Declaration><![CDATA[METHOD Initialize : HRESULT
+VAR
+	nIdx : UDINT;
+	stVarInfo : __SYSTEM.VAR_INFO;
+END_VAR
+VAR_INST
+	{attribute 'hide'}	
+	nInitSeq : UINT;
+	//This error cannot be reset. Requires a reset cold
+	{attribute 'hide'}	
+	fbInitError : FB_TcAlarm;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Check if link to MC-Mover is mapped
+IF NOT THIS^.Mapped THEN
+	IF NOT fbInitError.bRaised THEN 
+		//This error cannot be reset. Requires a reset cold
+		fbInitError.CreateEx(stEventEntry:=TC_EVENTS.CHALET_Base_Events.VariableLinkMissing, ipSourceInfo := THIS^.fbSourceInfo, bWithConfirmation := FALSE);
+		stVarInfo := __VARINFO(EtherCatMasterNetID);
+		fbInitError.ipArguments.AddString(stVarInfo.Symbol);
+		fbInitError.Raise(0);
+	END_IF
+	Initialize := E_FAIL;
+	RETURN;
+END_IF
+
+
+CASE nInitSeq OF
+	
+	0: //Validate condition to start scan
+		IF THIS^.Mapped AND EtherCatMasterNetID[5] <> 0 THEN
+			fbGetConfSlaves.sNetId := Tc2_System.F_CreateAmsNetId(nIds:= EtherCatMasterNetID);
+			nInitSeq := 1;
+		END_IF
+	
+	1: //Start scan
+		fbGetConfSlaves.bExecute := TRUE;	
+		nInitSeq := 2;
+
+	2: //Wait for done or error
+		IF NOT fbGetConfSlaves.bBusy THEN
+			nInitSeq := 3;
+			FOR nIdx := 0 TO BaseParameterlist.MAX_OBJECTS DO
+				IF stEcSlaveConfigData[nIdx].nAddr <> 0 THEN
+					//handover info to fb for each slave
+					fbEtherCatSlaveDiag[nIdx].SetConfig(stEcSlaveConfigData := stEcSlaveConfigData[nIdx], 
+														stEtherCatMasterNetID := THIS^.EtherCatMasterNetID);
+					//add to list
+					fbListOfEtherCatSlaves.AddObject(fbEtherCatSlaveDiag[nIdx]);
+				END_IF
+			END_FOR
+			
+			nInitSeq := 3;
+		END_IF
+
+	3: //Init List of slave diag FBs until S_OK;
+		IF fbListOfEtherCatSlaves.Initialize() = S_OK THEN
+			bInitDone := TRUE;
+			nInitSeq := 999;
+		END_IF
+		
+END_CASE
+
+
+//Cyclic update
+fbGetConfSlaves(pArrEcConfSlaveInfo := ADR(stEcSlaveConfigData), cbBufLen := SIZEOF(stEcSlaveConfigData));]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Initialized" Id="{ec1d54b1-bcb8-42e6-ad08-3dbac0b23bb1}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Initialized : BOOL]]></Declaration>
+      <Get Name="Get" Id="{dae459ce-e357-446a-b88b-f6a03075316b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Initialized := bInitDone;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ListOfDevices" Id="{5c4684a2-5c13-483a-abdc-2e8309b5908d}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY ListOfDevices : I_CH_List]]></Declaration>
+      <Get Name="Get" Id="{14afd010-3374-4d24-8f9f-9aba915851a2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ListOfDevices := THIS^.fbListOfEtherCatSlaves;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Mapped" Id="{19acf2db-286c-4ab6-815a-cc0db3dbb3e9}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Mapped : BOOL //Mapping to EtherCatMaster AMSNETID 
+]]></Declaration>
+      <Get Name="Get" Id="{05ed766e-72cd-4f1e-ba44-46aec11c5e4a}">
+        <Declaration><![CDATA[VAR
+	bIoPlcNotMapped 	: BOOL;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bIoPlcNotMapped := F_GetMappingStatus(ADR(THIS^.EtherCatMasterNetID), SIZEOF(THIS^.EtherCatMasterNetID)) <> EPlcMappingStatus.MS_Mapped;
+
+Mapped := NOT bIoPlcNotMapped;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="NumerOfDevice" Id="{7b93381d-c164-443c-90c2-6d515a7546d3}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY NumerOfDevice : UDINT]]></Declaration>
+      <Get Name="Get" Id="{1a4bffd0-e240-4687-95b0-725242adf4d5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[NumerOfDevice := fbListOfEtherCatSlaves.Size;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Update" Id="{8287aeaa-9da0-4bd6-9fc7-135b24540cb3}">
+      <Declaration><![CDATA[METHOD Update : HRESULT
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Update whole list but only one slave at once
+IF fbListOfEtherCatSlaves.HasNextObject() THEN
+	fbListOfEtherCatSlaves.GetNextObject().Update();
+ELSE
+	fbListOfEtherCatSlaves.ResetIterator();
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

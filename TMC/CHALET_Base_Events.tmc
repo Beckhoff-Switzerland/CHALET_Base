@@ -2,16 +2,72 @@
 <TcModuleClass>
 	<DataTypes>
 		<DataType>
-			<Name GUID="{EF4A30E6-04E3-4A0A-8E93-EA4F5C9FAB40}">CHALET_Base_Events</Name>
+			<Name GUID="{BBF42CD0-4BCA-40D0-9216-18FA736E7E29}">CHALET_Base_Events</Name>
 			<DisplayName TxtId=""><![CDATA[CHALET_Base_Events]]></DisplayName>
 			<EventId>
 				<Name Id="1">ListIsFull</Name>
 				<DisplayName TxtId=""><![CDATA[List is already full and another element has been added]]></DisplayName>
 				<Severity>Critical</Severity>
 			</EventId>
+			<EventId>
+				<Name Id="3">TimeOutEnabling</Name>
+				<DisplayName TxtId=""><![CDATA[Timeout on system enabling step {0}]]></DisplayName>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="2">VariableLinkMissing</Name>
+				<DisplayName TxtId=""><![CDATA[The following variable is not linked: {0}]]></DisplayName>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="4">ErrorEnabling</Name>
+				<DisplayName TxtId=""><![CDATA[Error on system enabling step {0}]]></DisplayName>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="5">ErrorFBinit</Name>
+				<DisplayName TxtId=""><![CDATA[Fatal error in FB_Init. Invalid parameters]]></DisplayName>
+				<Severity>Critical</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="6">FeedbackErrorCmd</Name>
+				<DisplayName TxtId=""><![CDATA[Error in feedback. Command {0} error id {1}]]></DisplayName>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="7">EcNotInOP</Name>
+				<DisplayName TxtId=""><![CDATA[EtherCAT device "{0}" is not in operational(OP) state]]></DisplayName>
+				<Comment TxtId=""><![CDATA[Operational (Op)
+Before the EtherCAT master switches the EtherCAT slave from Safe-Op to Op it must transfer valid output data.
+In the Op state the slave copies the output data of the masters to its outputs. Process data and mailbox communication is possible.]]></Comment>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="8">EcLinkStateNotPresent</Name>
+				<DisplayName TxtId=""><![CDATA[No EtherCAT communication with device "{0}"]]></DisplayName>
+				<Severity>Error</Severity>
+			</EventId>
+			<EventId>
+				<Name Id="9">EcMissingLink</Name>
+				<DisplayName TxtId=""><![CDATA[EtherCAT device "{0}" is missing connection on Port "{1}"]]></DisplayName>
+				<Severity>Warning</Severity>
+			</EventId>
 			<Hides>
 				<Hide GUID="{646AC05C-D6F8-4D85-9633-FF6C5A75B426}"/>
 				<Hide GUID="{608137E8-90FD-4526-9E9A-9881BE219F3E}"/>
+				<Hide GUID="{EF4A30E6-04E3-4A0A-8E93-EA4F5C9FAB40}"/>
+				<Hide GUID="{9D74E4A3-9184-4F8F-9C14-412EE1ED39E8}"/>
+				<Hide GUID="{5D4F6F9E-A1D9-4837-86ED-EFD202AC8A16}"/>
+				<Hide GUID="{5A4762D1-1987-46CF-A650-E82CF1B0F447}"/>
+				<Hide GUID="{1D79E1FD-C39A-42E8-84F7-59B2679B7135}"/>
+				<Hide GUID="{19226A3E-4185-44C9-81B9-EA65D937EE51}"/>
+				<Hide GUID="{3C8ACE18-F3DB-4E0A-9D6E-33EFD5820633}"/>
+				<Hide GUID="{3DC5B568-F856-47A8-979F-C4605EBB5925}"/>
+				<Hide GUID="{F1499079-0124-4DD9-A3F7-E7D27B010203}"/>
+				<Hide GUID="{4D5A2642-D8AF-40CC-8F6A-4CADD0107B1D}"/>
+				<Hide GUID="{BC9314FC-2D24-4FAA-AE66-82B1FFE93DE5}"/>
+				<Hide GUID="{B4DA1DE7-076E-42E1-9DCA-D155C726E917}"/>
+				<Hide GUID="{C300C300-1CF4-4BB8-9C77-F0A1318CB2E7}"/>
 			</Hides>
 		</DataType>
 	</DataTypes>
