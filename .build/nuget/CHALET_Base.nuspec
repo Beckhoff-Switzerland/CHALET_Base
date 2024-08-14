@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>Beckhoff-Switzerland.CHALET.Base</id>
+      <version>3.4.5</version>
+      <title>CHALET | Base</title>
+      <tags>Beckhoff TwinCAT Workload CategoryGeneral VariantXAE Beckhoff-Switzerland</tags>
+      <authors>Beckhoff Switzerland</authors>
+      <projectUrl>https://github.com/Beckhoff-Switzerland/CHALET_Base</projectUrl>
+      <copyright>(c) Beckhoff Automation AG</copyright>
+      <licenseUrl>https://github.com/Beckhoff-Switzerland/CHALET_Base/blob/master/LICENSE.md</licenseUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>icon.png</icon>
+    <packageTypes>
+      <packageType name="Workload"/>
+    </packageTypes>
+    <description>CHALET Base library</description>
+    <dependencies>
+      <dependency id="TwinCAT.Standard.XAE"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Beckhoff-Switzerland.jpg" target="icon.png" />
+    <file src="tools\**" target="tools" />
+    <file src="libraries\**" target="tools\libraries"/>
+  </files>
+</package>
