@@ -54,7 +54,7 @@ $solution.SolutionBuild.Build($true)
 
 # Save as library
 $plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
-$plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\CHALET_Base.Library", $false);
+$plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder.Library", $false);
 
 # Release resources
 $shell.Quit()
