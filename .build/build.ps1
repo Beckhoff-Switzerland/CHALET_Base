@@ -27,9 +27,13 @@ $shell = new-object -com $twincat_4026_64bit_shell
 $shell.SuppressUI = $false
 $shell.MainWindow.Visible = $true
 
-# Prepare directory
-Remove-Item ($buildAgent_Environment + "\" + $solutionFolder) -Recurse -Force
-New-Item -ItemType Directory -Force -Path ($buildAgent_Environment + "\" + $solutionFolder)
+# Prepare empty directory
+$buildPath = $buildAgent_Environment + "\" + $solutionFolder
+if (Test-Path -LiteralPath $buildPath) {
+    Remove-Item -LiteralPath $buildPath -Recurse - Force
+} else {
+    New-Item -ItemType Directory -Force -Path $buildPath
+}
 
 # Create new solution
 $solution = $shell.solution
