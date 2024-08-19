@@ -1,50 +1,56 @@
-# Define and assign directory and naming variables
-$workingDirectory = Get-Location
+# Build environment variables
+$buildAgent_ScriptPath = Get-Location
+$buildAgent_Environment = "C:\Build"
 
-$baseFolder = "C:\BuildFolder"
-$solutionFolder = "CHALET_Base"
+# Solution tree variables
 $solutionName = "BuildSolution"
+$solutionFolder = "CHALET_Base"
 $projectName = "Configuration"
+$plcProjectFile = "Plc_CHALET_Base.plcproj"
+$plcName = "Plc_CHALET_Base"
+$plcProjectName = "Plc_CHALET_Base Projekt"
 
-$xaeProjectTemplate = "C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Base\PrjTemplate\TwinCAT Project.tsproj"
-$plcProjectSource = "Plc_CHALET_Base.plcproj"
+# Engineering environment variables
+$twincat_4026_64bit_shell = TcXaeShell.DTE.17.0
+$twincat_XaeTemplate = "C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Base\PrjTemplate\TwinCAT Project.tsproj"
+$twincat_PlcNode = "TIPC"
 
-# Include further scripts
-. "$WorkingDirectory\tools\MessageFilter.ps1"
+# Include message filter class
+. "$buildAgent_ScriptPath\tools\MessageFilter.ps1"
 
 # Register COM message filter
 AddMessageFilterClass
 [EnvDTEUtils.MessageFilter]::Register()
 
 # Open XAE Shell
-$shell = new-object -com TcXaeShell.DTE.17.0
+$shell = new-object -com $twincat_4026_64bit_shell
 $shell.SuppressUI = $false
 $shell.MainWindow.Visible = $true
 
 # Prepare directory
-Remove-Item ($baseFolder + "\" + $solutionFolder) -Recurse -Force
-New-Item -ItemType Directory -Force -Path ($baseFolder + "\" + $solutionFolder)
+Remove-Item ($buildAgent_Environment + "\" + $solutionFolder) -Recurse -Force
+New-Item -ItemType Directory -Force -Path ($buildAgent_Environment + "\" + $solutionFolder)
 
 # Create new solution
 $solution = $shell.solution
-$solution.Create($baseFolder, $solutionFolder)
-$solution.SaveAs($baseFolder + "\" + $solutionFolder + "\" + $solutionName)
+$solution.Create($buildAgent_Environment, $solutionFolder)
+$solution.SaveAs($buildAgent_Environment + "\" + $solutionFolder + "\" + $solutionName)
 
 # Create new system manger
 $project = $solution.AddFromTemplate($xaeProjectTemplate, ($baseFolder + "\" + $solutionFolder + "\" + $projectName), $projectName)
 $systemManager = $project.Object
 
-# Add existing plc project
-$plcNode = $systemManager.LookupTreeItem("TIPC")
-$plcPath = (Split-Path -Path ($workingDirectory).Path -Parent) + "\" + $plcProjectSource
+# Add existing plc project (one level above the .build folder)
+$plcNode = $systemManager.LookupTreeItem($twincat_PlcNode)
+$plcPath = (Split-Path -Path ($buildAgent_ScriptPath).Path -Parent) + "\" 
 $plcNode.CreateChild("ExistingPlcProject", 0, "", $plcPath)
 
 # Build the solution
 $solution.SolutionBuild.Build($true)
 
 # Save as library
-$plcGeneratedNode = $systemManager.LookupTreeItem("TIPC^Plc_CHALET_Base^Plc_CHALET_Base Projekt")
-$plcGeneratedNode.SaveAsLibrary("C:\BuildFolder\CHALET_Base.Library", $false);
+$plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
+$plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\CHALET_Base.Library", $false);
 
 # Release resources
 $shell.Quit()
