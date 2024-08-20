@@ -5,7 +5,7 @@ function BuildWithConfiguration {
 		$configuration
 	)
 
-	log  "Build configuratoin '$configuration' of project: $project"
+	log  "Build the project with configuration $configuration"
 	$solution.solutionBuild.BuildProject("$configuration", $project, $true)
 
 	$lastBuildInfo = $solution.solutionBuild.LastBuildInfo
