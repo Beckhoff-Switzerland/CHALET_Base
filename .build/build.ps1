@@ -33,9 +33,9 @@ $shell.MainWindow.Visible = $true
 # Prepare empty directory
 $buildPath = "$buildAgent_Environment\$solutionFolder"
 if (Test-Path -LiteralPath $buildPath) {
-    Remove-Item ($buildPath) -Recurse -Force
+    $null = Remove-Item ($buildPath) -Recurse -Force
 } 
-New-Item -ItemType Directory -Force -Path $buildPath
+$null = New-Item -ItemType Directory -Force -Path $buildPath
 
 # Create new solution
 $solution = $shell.solution
@@ -49,7 +49,7 @@ $systemManager = $project.Object
 # Add existing plc project (one level above the .build folder)
 $plcNode = $systemManager.LookupTreeItem($twincat_PlcNode)
 $plcPath = (Split-Path -Path ($buildAgent_ScriptPath).Path -Parent) + "\" 
-$plcNode.CreateChild("ExistingPlcProject", 0, "", "$plcPath\$plcProjectFile.plcproj")
+$null = $plcNode.CreateChild("ExistingPlcProject", 0, "", "$plcPath\$plcProjectFile.plcproj")
 
 # Build the solution
 BuildWithConfiguration $solution "$buildAgent_Environment\$solutionFolder\$projectName\$projectName.tsproj" $twincat_solution_configuration
@@ -57,7 +57,7 @@ BuildWithConfiguration $solution "$buildAgent_Environment\$solutionFolder\$proje
 
 # Save as library
 $plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
-$plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder.Library", $false);
+$null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder.Library", $false);
 
 # Release resources
 $shell.Quit()
