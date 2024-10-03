@@ -15,50 +15,70 @@ $twincat_4026_64bit_shell = "TcXaeShell.DTE.17.0"
 $twincat_solution_configuration = "Release|TwinCAT RT (x64)"
 $twincat_XaeTemplate = "C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Base\PrjTemplate\TwinCAT Project.tsproj"
 $twincat_PlcNode = "TIPC"
+$twincat_LicenseNode = "TIRC^License"
+$twincat_IoNode = "TIID"
 
-# Include tools
-. "$buildAgent_ScriptPath\tools\MessageFilter.ps1"
-. "$buildAgent_ScriptPath\tools\Logger.ps1"
-. "$buildAgent_ScriptPath\tools\Builder.ps1"
+# Import tools
+import-module "$buildAgent_ScriptPath\tools\MessageFilter.psm1"
+import-module "$buildAgent_ScriptPath\tools\Logger.psm1"
+import-module "$buildAgent_ScriptPath\tools\Builder.psm1"
 
-log "Register COM message filter"
+Log "Register COM message filter"
 AddMessageFilterClass
 [EnvDTEUtils.MessageFilter]::Register()
 
-log "Open XAE Shell"
+Log "Open XAE Shell"
 $shell = new-object -ComObject $twincat_4026_64bit_shell
 $shell.SuppressUI = $false
 $shell.MainWindow.Visible = $true
 
-log "Prepare empty directory"
+Log "Prepare empty directory"
 $buildPath = "$buildAgent_Environment\$solutionFolder"
 if (Test-Path -LiteralPath $buildPath) {
     $null = Remove-Item ($buildPath) -Recurse -Force
 } 
 $null = New-Item -ItemType Directory -Force -Path $buildPath
 
-log "Create new solution"
+Log "Create new solution"
 $solution = $shell.solution
 $solution.Create($buildAgent_Environment, $solutionFolder)
 $solution.SaveAs("$buildAgent_Environment\$solutionFolder\$solutionName")
 
-log "Create new system manger"
+Log "Create new system manger"
 $project = $solution.AddFromTemplate($twincat_XaeTemplate, "$buildAgent_Environment\$solutionFolder\$projectName", $projectName)
 $systemManager = $project.Object
 
-log "Add existing plc project (from one level above the .build folder)"
+Log "Add license dongle with engineering licenses"
+$ioNode = $systemManager.LookupTreeItem($twincat_IoNode)
+$licenseNode = $systemManager.LookupTreeItem($twincat_LicenseNode)
+$usbNode = $ioNode.CreateChild("USB", 57, $null)
+$usbNode.ConsumeXml("<TreeItem><DeviceDef><ScanBoxes>1</ScanBoxes></DeviceDef></TreeItem>")
+$count = 0;
+foreach($usbDevice in $usbNode) {
+    if($usbDevice.ItemSubtype -eq 9900){
+        if($count -eq 0){
+            $licenseNode.CreateChild("Engineering Dongle", 0, $null, $usbDevice.Name)
+        } else {
+            $licenseNode.CreateChild("Engineering Dongle $count", 0, $null, $usbDevice.Name)
+        }     
+        $licenseDevice = $licenseNode.LookupChild("Engineering Dongle $count")
+        $count++
+    }
+}
+
+Log "Add existing plc project (from one level above the .build folder)"
 $plcNode = $systemManager.LookupTreeItem($twincat_PlcNode)
 $plcPath = (Split-Path -Path ($buildAgent_ScriptPath).Path -Parent) + "\" 
 $null = $plcNode.CreateChild("ExistingPlcProject", 0, "", "$plcPath\$plcProjectFile.plcproj")
 
-log "Build the solution"
+Log "Build the solution"
 BuildWithConfiguration $solution "$buildAgent_Environment\$solutionFolder\$projectName\$projectName.tsproj" $twincat_solution_configuration
 
-log "Save as library"
+Log "Save as library"
 $plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
 $null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder.Library", $false);
 
-log "Release the shell"
+Log "Release the shell"
 $shell.Quit()
 
 [EnvDTEUtils.MessageFilter]::Revoke()

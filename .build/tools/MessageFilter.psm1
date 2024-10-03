@@ -150,3 +150,5 @@ AddMessageFilterClass
 # # End automation code, revoke MessageFilter 
  
 # [EnvDTEUtils.MessageFilter]::Revoke()
+
+Export-ModuleMember -Function AddMessageFilterClass

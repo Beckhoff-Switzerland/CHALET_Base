@@ -20,3 +20,5 @@ function BuildWithConfiguration {
 	}
 
 }
+
+Export-ModuleMember -Function BuildWithConfiguration
