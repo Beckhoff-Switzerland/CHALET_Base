@@ -9,7 +9,9 @@ VAR
 	fbSourceInfo : FB_TcSourceInfo;
 	
 	{attribute 'hide'}
-	nTaskIndex : BYTE; //Used in TwinCAT_SystemInfoVarList._TaskInfo
+	nTaskIndex : BYTE; //Used in TwinCAT_SystemInfoVarList._TaskInfo	
+	{attribute 'hide'}
+	nSortOrderInList : UDINT; //Used in List in methode Sort()
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -61,6 +63,27 @@ END_VAR
           <ST><![CDATA[OID := 0;]]></ST>
         </Implementation>
       </Get>
+    </Property>
+    <Property Name="SortOrderInList" Id="{44d8d45d-8db4-446b-8829-684c6a9c150e}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+//Optional. Is used in FB_CH_List in the “Sort()” method. The entire list is sorted by ascending number. (small numbers at the beginning)
+PROPERTY SortOrderInList : UDINT]]></Declaration>
+      <Get Name="Get" Id="{8da8c556-1f28-46a8-b0d5-3c93e71aec69}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SortOrderInList := nSortOrderInList;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{736f4f18-d730-4692-a870-0c58aa47e5fc}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[nSortOrderInList := SortOrderInList;]]></ST>
+        </Implementation>
+      </Set>
     </Property>
     <Property Name="TaskIndex" Id="{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}">
       <Declaration><![CDATA[//Used in TwinCAT_SystemInfoVarList._TaskInfo

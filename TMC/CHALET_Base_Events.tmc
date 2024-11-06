@@ -1,8 +1,43 @@
 <?xml version="1.0"?>
 <TcModuleClass>
+	<Translations>
+		<Text TxtId="CHALET_Base_Events"/>
+		<Text TxtId="List is already full and another element has been added">
+			<Text LcId="2055"><![CDATA[Die Liste ist bereits voll und es wurde ein weiteres Element hinzugefügt]]></Text>
+		</Text>
+		<Text TxtId="Timeout on system enabling step {0}">
+			<Text LcId="2055"><![CDATA[Zeitüberschreitung bei Systemaktivierungsschritt {0}]]></Text>
+		</Text>
+		<Text TxtId="The following variable is not linked: {0}">
+			<Text LcId="2055"><![CDATA[Die folgende Variable ist nicht verknüpft: {0}]]></Text>
+		</Text>
+		<Text TxtId="Error on system enabling step {0}">
+			<Text LcId="2055"><![CDATA[Fehler beim Systemaktivierungsschritt {0}]]></Text>
+		</Text>
+		<Text TxtId="Fatal error in FB_Init. Invalid parameters">
+			<Text LcId="2055"><![CDATA[Schwerwiegender Fehler in FB_Init. Ungültige Parameter]]></Text>
+		</Text>
+		<Text TxtId="Error in feedback. Command {0} error id {1}">
+			<Text LcId="2055"><![CDATA[Fehler in der Rückmeldung. Befehl {0} Fehler-ID {1}]]></Text>
+		</Text>
+		<Text TxtId="EtherCAT device &quot;{0}&quot; is not in operational(OP) state">
+			<Text LcId="2055"><![CDATA[EtherCAT-Gerät „{0}“ ist nicht im Zustand Operational (OP)]]></Text>
+		</Text>
+		<Text TxtId="Operational (Op)&#13;&#10;Before the EtherCAT master switches the EtherCAT slave from Safe-Op to Op it must transfer valid output data.&#13;&#10;In the Op state the slave copies the output data of the masters to its outputs. Process data and mailbox communication is possible.">
+			<Text LcId="2055"><![CDATA[Betriebsbereit (OP)
+Bevor der EtherCAT-Master den EtherCAT-Slave von Safe-Op nach Op schaltet, muss er gültige Ausgangsdaten übertragen.
+Im Zustand Op kopiert der Slave die Ausgangsdaten des Masters an seine Ausgänge. Prozessdaten- und Mailbox-Kommunikation ist möglich.]]></Text>
+		</Text>
+		<Text TxtId="No EtherCAT communication with device &quot;{0}&quot;">
+			<Text LcId="2055"><![CDATA[Keine EtherCAT-Kommunikation mit Gerät „{0}“]]></Text>
+		</Text>
+		<Text TxtId="EtherCAT device &quot;{0}&quot; is missing connection on Port &quot;{1}&quot;">
+			<Text LcId="2055"><![CDATA[EtherCAT-Gerät „{0}“ hat keine Verbindung zu Port „{1}“]]></Text>
+		</Text>
+	</Translations>
 	<DataTypes>
 		<DataType>
-			<Name GUID="{BBF42CD0-4BCA-40D0-9216-18FA736E7E29}">CHALET_Base_Events</Name>
+			<Name GUID="{E50A8DC0-767B-43DD-AE31-A0A4985C325D}">CHALET_Base_Events</Name>
 			<DisplayName TxtId=""><![CDATA[CHALET_Base_Events]]></DisplayName>
 			<EventId>
 				<Name Id="1">ListIsFull</Name>
@@ -68,6 +103,9 @@ In the Op state the slave copies the output data of the masters to its outputs. 
 				<Hide GUID="{BC9314FC-2D24-4FAA-AE66-82B1FFE93DE5}"/>
 				<Hide GUID="{B4DA1DE7-076E-42E1-9DCA-D155C726E917}"/>
 				<Hide GUID="{C300C300-1CF4-4BB8-9C77-F0A1318CB2E7}"/>
+				<Hide GUID="{BBF42CD0-4BCA-40D0-9216-18FA736E7E29}"/>
+				<Hide GUID="{A6A35033-8D1E-40D4-9519-4CB4D997550A}"/>
+				<Hide GUID="{6D9C64F9-CB26-46C2-997A-F18F1ACBEFD1}"/>
 			</Hides>
 		</DataType>
 	</DataTypes>

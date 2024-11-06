@@ -155,7 +155,15 @@ VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//Update whole list but only one slave at once
+        <ST><![CDATA[//Force to do init
+IF NOT THIS^.Initialized THEN
+	Initialize();
+	RETURN;
+END_IF
+
+
+
+//Update whole list but only one slave at once
 IF fbListOfEtherCatSlaves.HasNextObject() THEN
 	fbListOfEtherCatSlaves.GetNextObject().Update();
 ELSE

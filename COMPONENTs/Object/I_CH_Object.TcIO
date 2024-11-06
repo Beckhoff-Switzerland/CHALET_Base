@@ -23,6 +23,17 @@ PROPERTY OID : OTCID ]]></Declaration>
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
+    <Property Name="SortOrderInList" Id="{5be1e675-4272-40f4-9968-0811bf10d9b9}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+//Optional. Is used in FB_CH_List in the “Sort()” method. The entire list is sorted by ascending number. (small numbers at the beginning)
+PROPERTY SortOrderInList : UDINT]]></Declaration>
+      <Get Name="Get" Id="{7e9e1b3d-ed32-4305-8caa-ef852e5c8874}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{2a3b0426-d763-4cd0-b825-23f0d11976bc}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
     <Method Name="Update" Id="{bb2c794e-2d3a-4108-8f6b-7a86da6d2da1}">
       <Declaration><![CDATA[METHOD Update : HRESULT
 VAR_INPUT

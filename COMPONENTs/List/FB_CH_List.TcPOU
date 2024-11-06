@@ -27,6 +27,7 @@ END_VAR
     <Folder Name="Iterator" Id="{7b049406-fe3d-42b5-89c1-7ebd8af337c7}" />
     <Folder Name="List" Id="{efee0648-7eeb-4629-a7ed-ed0883e34030}" />
     <Folder Name="Object" Id="{a7ed3d9e-a61a-4f2c-ab17-a49e9491f215}" />
+    <Folder Name="Sort" Id="{79aa9360-7172-439c-a273-476aab94443e}" />
     <Method Name="AddList" Id="{d78f867b-e215-47dc-8272-5375fc11c8aa}" FolderPath="List\">
       <Declaration><![CDATA[//Add all objects from the list in to this list
 METHOD PUBLIC AddList : HRESULT
@@ -70,6 +71,7 @@ END_VAR]]></Declaration>
 END_IF
 
 
+//Error if list is allready full
 IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
 	fbAlarmListFull.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsFull, 
 							ipSourceInfo := THIS^.fbSourceInfo, 
@@ -80,6 +82,8 @@ IF nObjectCount >= BaseParameterlist.MAX_OBJECTS THEN
 	RETURN;
 END_IF
 
+
+//Add to list
 nObjectCount := nObjectCount + 1;
 aObjects[nObjectCount] := iChObject;
 
@@ -93,9 +97,10 @@ VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR nIdx := 1 TO BaseParameterlist.MAX_OBJECTS DO
-	aObjects[nIdx] := NULL;
-END_FOR
+        <ST><![CDATA[Tc2_System.MEMSET(	destAddr	:= ADR(aObjects[1]), 
+					fillByte	:= 0, 
+					n			:= SIZEOF(aObjects[1])*BaseParameterlist.MAX_OBJECTS);
+
 
 nObjectCount	:= 0;
 nIdxNextObject	:= 0;
@@ -233,7 +238,6 @@ END_VAR
 IF nIdxNextObject > nObjectCount THEN
 	//Error!
 	//Todo: Errormessage
-	GetNextObject := 0;
 	RETURN;
 END_IF
 
@@ -241,6 +245,53 @@ END_IF
 
 
 GetNextObject := aObjects[nIdxNextObject];
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetObjectWithHighestNumber" Id="{ee81c51d-e2a2-43f0-9d42-10583248672c}" FolderPath="Sort\">
+      <Declaration><![CDATA[METHOD GetObjectWithHighestNumber : I_CH_Object
+
+VAR
+	nIdx : UDINT;
+	nMaxSortNbr : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+
+
+//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx].SortOrderInList >= nMaxSortNbr THEN
+		GetObjectWithHighestNumber := THIS^.aObjects[nIdx];
+		nMaxSortNbr := THIS^.aObjects[nIdx].SortOrderInList;
+	END_IF
+END_FOR
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetObjectWithLowestNumber" Id="{480d6024-da5c-4fb7-b6e9-7e94d73bd63d}" FolderPath="Sort\">
+      <Declaration><![CDATA[METHOD GetObjectWithLowestNumber : I_CH_Object
+VAR
+	nIdx : UDINT;
+	nMinSortNbr : UDINT := GVL_Datatypes.cMaxUDint;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check array until a match
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	IF THIS^.aObjects[nIdx].SortOrderInList <= nMinSortNbr THEN
+		GetObjectWithLowestNumber := THIS^.aObjects[nIdx];
+		nMinSortNbr := THIS^.aObjects[nIdx].SortOrderInList;
+	END_IF
+END_FOR
+
 
 
 ]]></ST>
@@ -286,7 +337,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[HasNextObject := (nIdxNextObject < nObjectCount);]]></ST>
+        <ST><![CDATA[HasNextObject := (nIdxNextObject < nObjectCount) AND_THEN (aObjects[nIdxNextObject+1] <> 0);]]></ST>
       </Implementation>
     </Method>
     <Method Name="Initialize" Id="{0433ca42-cba8-4876-af3c-f03841c3e69c}" FolderPath="List\">
@@ -402,6 +453,39 @@ END_FOR
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="RemoveAllDuplicateObjects" Id="{fc8edc33-4d26-4376-ab23-b949c4c5d07f}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD RemoveAllDuplicateObjects : HRESULT
+VAR_INPUT
+END_VAR
+VAR
+	nIdx : UDINT;
+	fbTempList : FB_CH_List;
+	fbFoundDublicateObjects : FB_CH_List;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Check eacht element in array, if allready was added in temp list. if found, delete
+FOR nIdx := 1 TO THIS^.nObjectCount DO
+	
+	//check if allready was found
+	IF fbTempList.ObjectInList(THIS^.aObjects[nIdx]) THEN
+		//Found, add to an list to delete in next step
+		fbFoundDublicateObjects.AddObject(THIS^.aObjects[nIdx]);	
+	ELSE
+		//Not found, add to list
+		fbTempList.AddObject(THIS^.aObjects[nIdx]);	
+	END_IF
+END_FOR
+
+
+//Delete in this list
+fbFoundDublicateObjects.ResetIterator();
+WHILE fbFoundDublicateObjects.HasNextObject() DO
+	THIS^.RemoveObject(fbFoundDublicateObjects.GetNextObject());
+END_WHILE
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="RemoveObject" Id="{2fbae86e-dd36-4e65-be68-63238054e89a}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC RemoveObject : BOOL
 VAR_INPUT
@@ -431,8 +515,15 @@ FOR nIdx := 1 TO nObjectCount DO
 		// Fill up the empty slot
 		MEMMOVE(ADR(aObjects[nIdx]), ADR(aObjects[nIdx + 1]), SIZEOF(aObjects[nIdx]) * (BaseParameterlist.MAX_OBJECTS - nIdx));
 	
+		// If pos in list is less than ListIterator, then reduce Iterator
+		IF nIdx <= nIdxNextObject THEN
+			nIdxNextObject := nIdxNextObject -1;
+		END_IF
+		
+		//Finish
 		RemoveObject := TRUE;
 		EXIT;
+			
 	END_IF
 END_FOR]]></ST>
       </Implementation>
@@ -484,6 +575,37 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="Sort" Id="{c9a98106-02cf-4336-9ba6-b62d16a29420}" FolderPath="Sort\">
+      <Declaration><![CDATA[//Tthe entire list sorted BY ascending number. (small numbers AT the beginning).
+//The FB_CH_Object.SortOrderInList is used
+METHOD Sort : HRESULT
+VAR
+	fbCopyOfList : FB_CH_List;
+	ipObjToAdd : I_CH_Object;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//TODO: use a smarter algorithm with less computational effort
+
+
+
+
+//Create a copy of this list
+fbCopyOfList.Duplicate(THIS^);
+
+//Clear this List
+THIS^.Clear();
+
+//Add the smalest number to this list
+WHILE NOT fbCopyOfList.IsEmpty DO
+	ipObjToAdd := fbCopyOfList.GetObjectWithLowestNumber();
+	fbCopyOfList.RemoveObject(ipObjToAdd);
+	THIS^.AddObject(ipObjToAdd);
+END_WHILE
+
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="Update" Id="{d0b62ac1-d7ee-4878-a622-e34d7fd6ea2d}" FolderPath="List\">
       <Declaration><![CDATA[METHOD Update : HRESULT //This method calls the respective update method of all contained objects
 VAR

@@ -31,7 +31,7 @@
                   <v n="AttributeConstraint">""</v>
                   <v n="AttributeReturnType">"FB_TcSourceInfo"</v>
                   <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
-                  <v n="AttributeObjectGuid">{6fe02a28-ea6b-48e7-8168-baeec4b355d7}</v>
+                  <v n="AttributeObjectGuid">{30fe3a07-e1f2-4f7d-8617-e280b158758e}</v>
                   <v n="AttributeStereotype">""</v>
                 </o>
                 <o>
@@ -74,6 +74,20 @@
                   <v n="AttributeReturnType">"BYTE"</v>
                   <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
                   <v n="AttributeObjectGuid">{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"SortOrderInList"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"UDINT"</v>
+                  <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
+                  <v n="AttributeObjectGuid">{44d8d45d-8db4-446b-8829-684c6a9c150e}</v>
                   <v n="AttributeStereotype">"Property"</v>
                 </o>
               </l>
@@ -144,9 +158,9 @@
                 <v n="IsElementVisible">true</v>
                 <v n="TopPosition">250</v>
                 <v n="LeftPosition">270</v>
-                <v n="WidthValue">196</v>
+                <v n="WidthValue">209</v>
                 <v n="MinWidthValue">0</v>
-                <v n="Height">156</v>
+                <v n="Height">173</v>
                 <v n="MinHeight">0</v>
                 <v n="AutomaticLayout">true</v>
                 <d n="DockingPoints" t="Hashtable" />
@@ -215,6 +229,20 @@
                   <v n="AttributeObjectGuid">{b43449ff-a0c9-4fe7-9dd9-24b5b0a7d8e6}</v>
                   <v n="AttributeStereotype">"Property"</v>
                 </o>
+                <o>
+                  <v n="bIsAttribute">false</v>
+                  <v n="isInputVar">false</v>
+                  <v n="isOutputVar">false</v>
+                  <v n="isInoutVar">false</v>
+                  <v n="isLocalVar">false</v>
+                  <v n="bIsMethod">true</v>
+                  <v n="AttribtueName">"SortOrderInList"</v>
+                  <v n="AttributeConstraint">""</v>
+                  <v n="AttributeReturnType">"UDINT"</v>
+                  <v n="AttributeParent">{b12f0d54-c62f-4bd7-8469-766bc19f5ddf}</v>
+                  <v n="AttributeObjectGuid">{5be1e675-4272-40f4-9968-0811bf10d9b9}</v>
+                  <v n="AttributeStereotype">"Property"</v>
+                </o>
               </l>
               <v n="PropertyID">-1</v>
               <v n="MethodsLoaded">false</v>
@@ -258,9 +286,9 @@
                 <v n="IsElementVisible">true</v>
                 <v n="TopPosition">120</v>
                 <v n="LeftPosition">270</v>
-                <v n="WidthValue">159</v>
+                <v n="WidthValue">209</v>
                 <v n="MinWidthValue">0</v>
-                <v n="Height">122</v>
+                <v n="Height">139</v>
                 <v n="MinHeight">0</v>
                 <v n="AutomaticLayout">true</v>
                 <d n="DockingPoints" t="Hashtable" />

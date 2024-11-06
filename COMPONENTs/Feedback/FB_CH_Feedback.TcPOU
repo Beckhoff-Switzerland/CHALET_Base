@@ -14,6 +14,7 @@ VAR
 	{attribute 'hide'}
 	nOldErrorId : UDINT;
 	{attribute 'hide'}
+	//Optional. If interface is <>0 a Error is automatic written in TC3_Eventlogger
 	ipSourceInfo : I_TcSourceInfo;
 END_VAR]]></Declaration>
     <Implementation>
@@ -146,7 +147,7 @@ VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
 	
-	//Optional. 0 is allowed. Used for Tc3_Eventlogger
+	//Optional. If interface is <>0 a Error is automatic written in TC3_Eventlogger
 	ipSourceInfo : I_TcSourceInfo;
 END_VAR
 ]]></Declaration>
@@ -199,34 +200,42 @@ END_VAR
     </Property>
     <Method Name="UpdateEventlogger" Id="{820b8977-8ae3-4cef-9fb5-0bcc7b4d79be}">
       <Declaration><![CDATA[METHOD PROTECTED UpdateEventlogger : BOOL
-VAR_INPUT
+VAR
+	nHR : DWORD;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//New alarm, raise
+        <ST><![CDATA[IF THIS^.ipSourceInfo = 0 THEN
+	//No TC3_Eventlogger alarm if interface is empty
+	RETURN;
+END_IF
+
+//New alarm, raise
 IF (THIS^.ErrorId <> THIS^.nOldErrorId) AND THIS^.Error THEN
 	THIS^.fbAlarm.Clear(0,0);
 	THIS^.fbAlarm.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.FeedbackErrorCmd, ipSourceInfo := THIS^.ipSourceInfo, bWithConfirmation:= FALSE);
 	//Error in feedback command {0} error id {1}
 	
-
+	//convert to DWORD
+	nHR := TO_DWORD(THIS^.HR);
+	
 	//Try to get some more details about error id
 	IF THIS^.HR = E_FAIL THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddStringByValue('E_FAIL');
 		
-	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0000) THEN
+	ELSIF ((nHR AND 16#FFFF_FF00) = 16#9811_0000) THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcSystemEventClass);
 		;//Global error codes
 			
-	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0500) THEN
+	ELSIF ((nHR AND 16#FFFF_FF00) = 16#9811_0500) THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcRouterEventClass);
 		;//Router error codes
 			
-	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_0700) THEN
+	ELSIF ((nHR AND 16#FFFF_FF00) = 16#9811_0700) THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcGeneralAdsEventClass);
 		;//General ADS errors
 			
-	ELSIF ((THIS^.HR AND 16#FFFF_FF00) = 16#9811_1000) THEN
+	ELSIF ((nHR AND 16#FFFF_FF00) = 16#9811_1000) THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId).AddEventReferenceIdGuid(nEventId := THIS^.ErrorId, EventClass := TC_EVENT_CLASSES.TcRTimeEventClass);
 		;//RTime error codes
 	

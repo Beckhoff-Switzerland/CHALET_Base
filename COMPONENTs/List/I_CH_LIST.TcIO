@@ -4,6 +4,11 @@
     <Declaration><![CDATA[INTERFACE I_CH_LIST
 ]]></Declaration>
     <Folder Name="Debug" Id="{3f0a098f-0460-439d-a8f7-37aa7612e213}" />
+    <Folder Name="ID" Id="{b5bee6b3-f34b-4142-822a-3bcf3bc4785b}" />
+    <Folder Name="Iterator" Id="{7a7c31ed-bfb1-4340-bc39-4f11a11e3794}" />
+    <Folder Name="List" Id="{ab4ecb65-114f-4800-8f52-0f0cb42c1aa5}" />
+    <Folder Name="Object" Id="{f7f4e7ee-8120-414e-9a76-54cfdf0852c8}" />
+    <Folder Name="Sort" Id="{35d21c57-0fe2-48d2-a4bf-54135e98546d}" />
     <Property Name="Content" Id="{fb93fbe7-0b6a-45f9-ade1-a986d6c8fe07}" FolderPath="Debug\">
       <Declaration><![CDATA[//DEBUG only. View content for easy debug. Do not use this property
 {attribute 'monitoring':='call'}
@@ -12,92 +17,106 @@ PROPERTY Content : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Method Name="FindLUID" Id="{b1c63aa2-f24f-4f14-9da7-0d917025b72e}">
+    <Method Name="FindLUID" Id="{b1c63aa2-f24f-4f14-9da7-0d917025b72e}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD PUBLIC FindLUID : I_CH_OBJECT
 VAR_INPUT
 	sLUID	: STRING;
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="FindOID" Id="{0f77295a-574e-4005-8b7a-219431a3336f}">
+    <Method Name="FindOID" Id="{0f77295a-574e-4005-8b7a-219431a3336f}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD FindOID : I_CH_OBJECT
 VAR_INPUT
 	nOID	: OTCID;
 END_VAR]]></Declaration>
     </Method>
-    <Method Name="FindOIDString" Id="{56977772-656e-4bac-acda-b7157561a0a9}">
+    <Method Name="FindOIDString" Id="{56977772-656e-4bac-acda-b7157561a0a9}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD FindOIDString : I_CH_OBJECT
 VAR_INPUT
 	sOID	: STRING;
 END_VAR]]></Declaration>
     </Method>
-    <Method Name="GetNextObject" Id="{1c7b796b-f015-453e-ad77-33118df7f431}">
+    <Method Name="GetNextObject" Id="{1c7b796b-f015-453e-ad77-33118df7f431}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC GetNextObject : I_CH_Object
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="GetRandomObject" Id="{c3d5e421-67b1-44a7-8dc5-765066f5a1a3}">
+    <Method Name="GetObjectWithHighestNumber" Id="{512eb182-fcc3-4841-980b-312825679c4e}" FolderPath="Sort\">
+      <Declaration><![CDATA[METHOD GetObjectWithHighestNumber : I_CH_Object
+]]></Declaration>
+    </Method>
+    <Method Name="GetObjectWithLowestNumber" Id="{fe0aba4e-8ef2-438c-a526-44a29387eb4a}" FolderPath="Sort\">
+      <Declaration><![CDATA[METHOD GetObjectWithLowestNumber : I_CH_Object
+]]></Declaration>
+    </Method>
+    <Method Name="GetRandomObject" Id="{c3d5e421-67b1-44a7-8dc5-765066f5a1a3}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD GetRandomObject : I_CH_Object
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="HasNextObject" Id="{594b4e43-9d17-49e3-8008-0d53d7e8f475}">
+    <Method Name="HasNextObject" Id="{594b4e43-9d17-49e3-8008-0d53d7e8f475}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC HasNextObject : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
-    <Property Name="IsEmpty" Id="{d3abda63-2a30-4497-96f0-7df6765ad498}">
+    <Property Name="IsEmpty" Id="{d3abda63-2a30-4497-96f0-7df6765ad498}" FolderPath="List\">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
 PROPERTY PUBLIC IsEmpty : BOOL]]></Declaration>
       <Get Name="Get" Id="{79cb8286-ac05-4e44-a30e-a9d78018dbd0}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="IsFull" Id="{6c230d12-db05-4952-a351-45df63272d31}">
+    <Property Name="IsFull" Id="{6c230d12-db05-4952-a351-45df63272d31}" FolderPath="List\">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
 PROPERTY PUBLIC IsFull : BOOL]]></Declaration>
       <Get Name="Get" Id="{70af465e-62e3-43fc-9513-246efd9b9f1a}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Method Name="LUIDInList" Id="{991f0cc3-7ee6-4a66-9716-0f0e5d809c37}">
+    <Method Name="LUIDInList" Id="{991f0cc3-7ee6-4a66-9716-0f0e5d809c37}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD PUBLIC LUIDInList : BOOL
 VAR_INPUT
 	sLUID	: STRING;
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="ObjectInList" Id="{e1aa04d1-835b-4b84-8b94-235211f2913d}">
+    <Method Name="ObjectInList" Id="{e1aa04d1-835b-4b84-8b94-235211f2913d}" FolderPath="Object\">
       <Declaration><![CDATA[METHOD PUBLIC ObjectInList : BOOL
 VAR_INPUT
 	iChObject	: I_CH_Object;
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="OIDInList" Id="{a5f3bce5-474f-4e1c-a60e-a22084904f90}">
+    <Method Name="OIDInList" Id="{a5f3bce5-474f-4e1c-a60e-a22084904f90}" FolderPath="ID\">
       <Declaration><![CDATA[METHOD PUBLIC OIDInList : BOOL
 VAR_INPUT
 	nOID	: OTCID;
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="ResetIterator" Id="{bab1e98b-f88f-4090-a6c9-84a76c2767bd}">
+    <Method Name="RemoveAllDuplicateObjects" Id="{43a6597e-7b09-42a5-b512-ddcf6b7559c7}" FolderPath="Object\">
+      <Declaration><![CDATA[METHOD RemoveAllDuplicateObjects : HRESULT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ResetIterator" Id="{bab1e98b-f88f-4090-a6c9-84a76c2767bd}" FolderPath="Iterator\">
       <Declaration><![CDATA[METHOD PUBLIC ResetIterator : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
-    <Method Name="RestoreIterator" Id="{33f0a221-2302-4c17-ac96-3f011c5c97be}">
+    <Method Name="RestoreIterator" Id="{33f0a221-2302-4c17-ac96-3f011c5c97be}" FolderPath="Iterator\">
       <Declaration><![CDATA[//Restore the iterator to the value before the last reset. This is necessary if several while loops are placed inside each other
 METHOD PUBLIC RestoreIterator : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
-    <Property Name="Size" Id="{b6426dfa-8408-4c4c-946b-84af6c72a15a}">
+    <Property Name="Size" Id="{b6426dfa-8408-4c4c-946b-84af6c72a15a}" FolderPath="List\">
       <Declaration><![CDATA[{attribute 'monitoring':='call'}
 PROPERTY PUBLIC Size : UDINT]]></Declaration>
       <Get Name="Get" Id="{1b00da5e-dad4-4d63-8d1e-dacc49874e60}">

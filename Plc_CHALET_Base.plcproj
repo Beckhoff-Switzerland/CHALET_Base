@@ -18,7 +18,7 @@
     <Company>Beckhoff CH</Company>
     <Released>false</Released>
     <Title>CHALET_BaseComponents</Title>
-    <ProjectVersion>3.4.5</ProjectVersion>
+    <ProjectVersion>3.6.2</ProjectVersion>
     <DeploymentEvents>
       <Events xmlns="">
         <Event>
@@ -261,7 +261,7 @@
                   <d n="SubKeys" t="Hashtable" />
                   <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
                     <v>bActive</v>
-                    <v>False</v>
+                    <v>True</v>
                   </d>
                 </o>
                 <v>6</v>
