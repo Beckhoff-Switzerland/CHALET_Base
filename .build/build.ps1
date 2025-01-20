@@ -31,6 +31,8 @@ Log "Open XAE Shell"
 $shell = new-object -ComObject $twincat_4026_64bit_shell
 $shell.SuppressUI = $false
 $shell.MainWindow.Visible = $true
+$shellSettings = $shell.GetObject("TcAutomationSettings");
+$shellSettings.SilentMode = $true
 
 Log "Prepare empty directory"
 $buildPath = "$buildAgent_Environment\$solutionFolder"
@@ -61,7 +63,6 @@ foreach($usbDevice in $usbNode) {
         } else {
             $licenseNode.CreateChild("Engineering Dongle $count", 0, $null, $usbDevice.Name)
         }     
-        $licenseDevice = $licenseNode.LookupChild("Engineering Dongle $count")
         $count++
     }
 }
@@ -70,15 +71,22 @@ Log "Add existing plc project (from one level above the .build folder)"
 $plcNode = $systemManager.LookupTreeItem($twincat_PlcNode)
 $plcPath = (Split-Path -Path ($buildAgent_ScriptPath).Path -Parent) + "\" 
 $null = $plcNode.CreateChild("ExistingPlcProject", 0, "", "$plcPath\$plcProjectFile.plcproj")
+$plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
+
+Log "Get plc project version"
+$plcXml =  [xml]$plcGeneratedNode.ProduceXml();
+$plcVersion = $plcXml.TreeItem.IECProjectDef.ProjectInfo.Version;
+$plcVersion = $plcVersion -replace '\.', '_'
+$plcTitle = $plcXml.TreeItem.IECProjectDef.ProjectInfo.Title;
 
 Log "Build the solution"
 BuildWithConfiguration $solution "$buildAgent_Environment\$solutionFolder\$projectName\$projectName.tsproj" $twincat_solution_configuration
 
 Log "Save as library"
-$plcGeneratedNode = $systemManager.LookupTreeItem("$twincat_PlcNode^$plcName^$plcProjectName")
-$null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder.Library", $false);
+$null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder\$plcTitle"+"_"+"$plcVersion.Library", $false);
 
 Log "Release the shell"
-$shell.Quit()
-
+$null = $shell.Quit();
 [EnvDTEUtils.MessageFilter]::Revoke()
+
+Log "The library $plcTitle with version $plcVersion was built successfully!"
