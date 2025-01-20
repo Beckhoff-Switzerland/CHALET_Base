@@ -83,7 +83,8 @@ Log "Build the solution"
 BuildWithConfiguration $solution "$buildAgent_Environment\$solutionFolder\$projectName\$projectName.tsproj" $twincat_solution_configuration
 
 Log "Save as library"
-$null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_Environment\$solutionFolder\$plcTitle"+"_"+"$plcVersion.Library", $false);
+mkdir bin;
+$null = $plcGeneratedNode.SaveAsLibrary("$buildAgent_ScriptPath\bin\$plcTitle"+"_"+"$plcVersion.Library", $false);
 
 Log "Release the shell"
 $null = $shell.Quit();
