@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="F_Convert32InPastTo64Bit" Id="{054e0635-e7a4-42ce-986d-0250286cd928}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Convert32InPastTo64Bit : T_DCTIME64
+VAR_INPUT
+	nTimeInPast32 : T_DCTIME32;
+END_VAR
+VAR
+	nCurDcTaskTime :T_DCTIME;
+	nNextOutputStartTime_DCTIME :T_DCTIME;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Convert 32bit (max 4.2sec) time format in 64bit (584year)
+nCurDcTaskTime := F_GetCurDcTaskTime();
+nNextOutputStartTime_DCTIME.dwHighPart := nCurDcTaskTime.dwHighPart;
+nNextOutputStartTime_DCTIME.dwLowPart := nTimeInPast32;
+
+//StartTimeNextOutput is allways in the past
+IF nTimeInPast32 > nCurDcTaskTime.dwLowPart THEN 
+	nNextOutputStartTime_DCTIME.dwHighPart := nNextOutputStartTime_DCTIME.dwHighPart - 1;
+END_IF
+
+//Convert in  64bit datetype
+F_Convert32InPastTo64Bit:= DCTIME_TO_DCTIME64(nNextOutputStartTime_DCTIME);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
