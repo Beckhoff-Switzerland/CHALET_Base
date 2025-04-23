@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
   <POU Name="FB_CH_Feedback" Id="{6a9d3331-e3b5-4ef2-b574-157425a03b33}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_Feedback IMPLEMENTS I_CH_Feedback
 VAR
@@ -12,7 +12,9 @@ VAR
     {attribute 'hide'}
     fbAlarm : Tc3_EventLogger.FB_TcAlarm;	
 	{attribute 'hide'}
-	nOldErrorId : UDINT;
+	nOldErrorId : UDINT; //last cycle
+	{attribute 'hide'}
+	bOldBusy	: BOOL; //last cycle
 	{attribute 'hide'}
 	//Optional. If interface is <>0 a Error is automatic written in TC3_Eventlogger
 	ipSourceInfo : I_TcSourceInfo;
@@ -211,13 +213,14 @@ END_VAR
 	RETURN;
 END_IF
 
-//New alarm, raise
+
+//New error, raise alarm
 IF (THIS^.ErrorId <> THIS^.nOldErrorId) AND THIS^.Error THEN
 	THIS^.fbAlarm.Clear(0,0);
 	THIS^.fbAlarm.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.FeedbackErrorCmd, ipSourceInfo := THIS^.ipSourceInfo, bWithConfirmation:= FALSE);
 	//Error in feedback command {0} error id {1}
 	
-	//convert to DWORD
+	//Convert to DWORD
 	nHR := TO_DWORD(THIS^.HR);
 	
 	//Try to get some more details about error id
@@ -244,18 +247,31 @@ IF (THIS^.ErrorId <> THIS^.nOldErrorId) AND THIS^.Error THEN
 		THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand).AddUDInt(THIS^.ErrorId);
 	END_IF
 	
+	THIS^.fbAlarm.Raise(0);
 
-
-
+	
+//Busy, raise info
+ELSIF (THIS^.Busy <> THIS^.bOldBusy) AND THIS^.Busy AND BaseParameterlist.B_WRITE_INFO_FEEDBACK_BUSY THEN
+	THIS^.fbAlarm.Clear(0,0);
+	THIS^.fbAlarm.CreateEx(stEventEntry := TC_EVENTS.CHALET_Base_Events.FeedbackBusy, ipSourceInfo := THIS^.ipSourceInfo, bWithConfirmation:= FALSE);
+	THIS^.fbAlarm.ipArguments.Clear().AddStringByValue(THIS^.ActiveCommand);
 	THIS^.fbAlarm.Raise(0);
 	
-//No alarm	
-ELSIF NOT THIS^.Error THEN
+//No error, clear alarm	
+ELSIF NOT THIS^.Error AND NOT (THIS^.Busy AND BaseParameterlist.B_WRITE_INFO_FEEDBACK_BUSY) THEN
 	THIS^.fbAlarm.Clear(0,0);
 END_IF
 
+THIS^.nOldErrorId 	:= THIS^.ErrorId;
+THIS^.bOldBusy 		:= THIS^.Busy;
 
-THIS^.nOldErrorId := THIS^.ErrorId;]]></ST>
+
+
+
+
+
+
+]]></ST>
       </Implementation>
     </Method>
   </POU>
