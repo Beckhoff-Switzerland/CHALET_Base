@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <Itf Name="I_CH_List_Dublicate" Id="{dd5319f2-3bd5-4136-b363-8610e687c588}">
+    <Declaration><![CDATA[INTERFACE I_CH_List_Dublicate EXTENDS __SYSTEM.IQueryInterface
+
+]]></Declaration>
+    <Property Name="Content" Id="{bc1cbc98-b44d-4fbc-baec-882d8bbbe01c}">
+      <Declaration><![CDATA[{attribute 'monitoring':='call'}
+PROPERTY Content : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object]]></Declaration>
+      <Get Name="Get" Id="{e8d98e35-cce7-4d8a-9eb2-34e8e7243909}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

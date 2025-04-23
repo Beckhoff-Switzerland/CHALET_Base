@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <ClassDiagram Name="CD_CH_Object" Id="{27bf0018-125d-4aa8-8982-7233c614f29b}">
     <XmlArchive>
       <Data>
@@ -31,7 +31,7 @@
                   <v n="AttributeConstraint">""</v>
                   <v n="AttributeReturnType">"FB_TcSourceInfo"</v>
                   <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
-                  <v n="AttributeObjectGuid">{30fe3a07-e1f2-4f7d-8617-e280b158758e}</v>
+                  <v n="AttributeObjectGuid">{37fd37e6-f556-42dd-8a63-5261387f1647}</v>
                   <v n="AttributeStereotype">""</v>
                 </o>
                 <o>
@@ -69,11 +69,11 @@
                   <v n="isInoutVar">false</v>
                   <v n="isLocalVar">false</v>
                   <v n="bIsMethod">true</v>
-                  <v n="AttribtueName">"TaskIndex"</v>
+                  <v n="AttribtueName">"SortOrderInList"</v>
                   <v n="AttributeConstraint">""</v>
-                  <v n="AttributeReturnType">"BYTE"</v>
+                  <v n="AttributeReturnType">"UDINT"</v>
                   <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
-                  <v n="AttributeObjectGuid">{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}</v>
+                  <v n="AttributeObjectGuid">{44d8d45d-8db4-446b-8829-684c6a9c150e}</v>
                   <v n="AttributeStereotype">"Property"</v>
                 </o>
                 <o>
@@ -83,11 +83,11 @@
                   <v n="isInoutVar">false</v>
                   <v n="isLocalVar">false</v>
                   <v n="bIsMethod">true</v>
-                  <v n="AttribtueName">"SortOrderInList"</v>
+                  <v n="AttribtueName">"TaskIndex"</v>
                   <v n="AttributeConstraint">""</v>
-                  <v n="AttributeReturnType">"UDINT"</v>
+                  <v n="AttributeReturnType">"BYTE"</v>
                   <v n="AttributeParent">{409d828e-23b5-4a9e-a56a-5036375242c4}</v>
-                  <v n="AttributeObjectGuid">{44d8d45d-8db4-446b-8829-684c6a9c150e}</v>
+                  <v n="AttributeObjectGuid">{0d71e8a5-11e0-4564-a8a9-71aaa9db2e92}</v>
                   <v n="AttributeStereotype">"Property"</v>
                 </o>
               </l>

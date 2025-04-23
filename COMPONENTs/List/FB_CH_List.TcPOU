@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <POU Name="FB_CH_List" Id="{af82aebc-49fb-4481-993c-d70fe342fe7b}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_List EXTENDS FB_CH_Object IMPLEMENTS I_CH_LIST
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CH_List EXTENDS FB_CH_Object IMPLEMENTS I_CH_LIST, I_CH_List_Dublicate
 VAR
 	{attribute 'hide'}
 	nObjectCount			: UDINT;
@@ -36,23 +36,70 @@ VAR_INPUT
 END_VAR
 VAR
 	hr : HRESULT;
-END_VAR]]></Declaration>
+	ipListDublicate : I_CH_List_Dublicate;
+	refRemoteList : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object;
+	pRemoteList : PVOID;
+END_VAR
+VAR_INST
+	{attribute 'hide'}
+	fbAlarmInvalideInputparm : FB_TcAlarm;
+	{attribute 'hide'}
+	fbAlarmListToSmall : FB_TcAlarm;
+END_VAR
+]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF ipList = 0 THEN
+        <ST><![CDATA[// Invalide input
+IF ipList = 0 THEN
+	fbAlarmInvalideInputparm.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.Invalide_Inputparameter, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmInvalideInputparm.ipArguments.Clear().AddStringByValue('ipList');
+	fbAlarmInvalideInputparm.Raise(0);	
+
 	AddList := S_FALSE;
 	RETURN;
 END_IF
 
-ipList.ResetIterator();
-WHILE ipList.HasNextObject() DO
-	hr := THIS^.AddObject(ipList.GetNextObject());
-	IF hr <> S_OK THEN
-		//Error
-		AddList := hr;
-		RETURN;
-	END_IF
-END_WHILE
-ipList.RestoreIterator();]]></ST>
+
+// This list is to small
+IF (ipList.Size + THIS^.Size) > BaseParameterlist.MAX_OBJECTS THEN
+	fbAlarmListToSmall.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsToSmall, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmListToSmall.Raise(0);	
+
+	AddList := S_FALSE;
+	RETURN;
+END_IF
+
+
+//Done nothing to add
+IF ipList.Size = 0 THEN
+	AddList := S_OK;
+	RETURN;
+END_IF
+
+
+//Check if the list has an optional I_CH_List_Dublicate interface. If so use the faste memcpy, else use default list commands
+IF __QUERYINTERFACE(ipList, ipListDublicate) AND_THEN __ISVALIDREF(ipListDublicate.Content) THEN
+	refRemoteList REF= ipListDublicate.Content;
+	pRemoteList := ADR(refRemoteList);
+	Tc2_System.MEMCPY(destAddr:= ADR(THIS^.aObjects[(THIS^.nObjectCount+1)]), srcAddr:= pRemoteList, n:= (SIZEOF(THIS^.aObjects[1])*ipList.Size) );
+	THIS^.nObjectCount := ipList.Size + THIS^.nObjectCount; //Set size of List
+ELSE
+	ipList.ResetIterator();
+	WHILE ipList.HasNextObject() DO
+		hr := THIS^.AddObject(ipList.GetNextObject());
+		IF hr <> S_OK THEN
+			//Error
+			AddList := hr;
+			RETURN;
+		END_IF
+	END_WHILE
+	ipList.RestoreIterator();
+END_IF
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddObject" Id="{ba744631-6ed0-4654-afee-3bfb932f232e}" FolderPath="Object\">
@@ -127,7 +174,18 @@ VAR_INPUT
 END_VAR
 VAR
 	ipThisList : I_CH_LIST := THIS^;
-END_VAR]]></Declaration>
+	hr : HRESULT;
+	ipListDublicate : I_CH_List_Dublicate;
+	refRemoteList : REFERENCE TO ARRAY [1..BaseParameterlist.MAX_OBJECTS] OF I_CH_Object;
+	pRemoteList : PVOID;
+END_VAR
+VAR_INST
+	{attribute 'hide'}
+	fbAlarmInvalideInputparm : FB_TcAlarm;
+	{attribute 'hide'}
+	fbAlarmListToSmall : FB_TcAlarm;
+END_VAR
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[//New list equals this list
 IF ipListCopyFrom = ipThisList THEN
@@ -136,11 +194,16 @@ IF ipListCopyFrom = ipThisList THEN
 	RETURN;
 END_IF
 
-
 THIS^.Clear();
 
 // Invalide input
 IF ipListCopyFrom = 0 THEN
+	fbAlarmInvalideInputparm.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.Invalide_Inputparameter, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmInvalideInputparm.ipArguments.Clear().AddStringByValue('ipListCopyFrom');
+	fbAlarmInvalideInputparm.Raise(0);	
+
 	Duplicate := FALSE;
 	RETURN;
 END_IF
@@ -148,17 +211,40 @@ END_IF
 
 // This list is to small
 IF ipListCopyFrom.Size > BaseParameterlist.MAX_OBJECTS THEN
+	fbAlarmListToSmall.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.ListIsToSmall, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmListToSmall.Raise(0);	
 	Duplicate := FALSE;
 	RETURN;
 END_IF
 
 
+//Done nothing to add
+IF ipListCopyFrom.Size = 0 THEN
+	Duplicate := TRUE;
+	RETURN;
+END_IF
 
-ipListCopyFrom.ResetIterator();
-WHILE ipListCopyFrom.HasNextObject() DO
-	THIS^.AddObject(ipListCopyFrom.GetNextObject());
-END_WHILE
-ipListCopyFrom.RestoreIterator();
+
+//Check if the list has an optional I_CH_List_Dublicate interface. If so use the faste memcpy, else use list commands
+IF __QUERYINTERFACE(ipListCopyFrom, ipListDublicate) AND_THEN __ISVALIDREF(ipListDublicate.Content) THEN
+	refRemoteList REF= ipListDublicate.Content;
+	pRemoteList := ADR(refRemoteList);
+	Tc2_System.MEMCPY(destAddr:= ADR(THIS^.aObjects), srcAddr:= pRemoteList, n:= (SIZEOF(THIS^.aObjects[1])*ipListCopyFrom.Size) );
+	THIS^.nObjectCount := ipListCopyFrom.Size; //Set size of List
+ELSE
+	ipListCopyFrom.ResetIterator();
+	WHILE ipListCopyFrom.HasNextObject() DO
+		hr := THIS^.AddObject(ipListCopyFrom.GetNextObject());
+		IF hr <> S_OK THEN
+			//Error
+			Duplicate := FALSE;
+			RETURN;
+		END_IF
+	END_WHILE
+	ipListCopyFrom.RestoreIterator();	
+END_IF
 
 
 Duplicate := TRUE;
@@ -230,14 +316,21 @@ END_FOR
       <Declaration><![CDATA[METHOD PUBLIC GetNextObject : I_CH_Object
 VAR_INPUT
 END_VAR
-]]></Declaration>
+VAR_INST
+	{attribute 'hide'}
+	fbAlarmInvalideEndOfList : FB_TcAlarm;
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[nIdxNextObject := nIdxNextObject + 1;
 
 
 IF nIdxNextObject > nObjectCount THEN
 	//Error!
-	//Todo: Errormessage
+	fbAlarmInvalideEndOfList.CreateEx(stEventEntry:= TC_EVENTS.CHALET_Base_Events.Invalive_EndOfList, 
+							ipSourceInfo := THIS^.fbSourceInfo, 
+							bWithConfirmation := FALSE);
+	fbAlarmInvalideEndOfList.ipArguments.Clear().AddStringByValue('.GetNextObject()');
+	fbAlarmInvalideEndOfList.Raise(0);
 	RETURN;
 END_IF
 

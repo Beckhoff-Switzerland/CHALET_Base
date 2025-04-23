@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <Itf Name="I_CH_Object" Id="{b12f0d54-c62f-4bd7-8469-766bc19f5ddf}">
     <Declaration><![CDATA[INTERFACE I_CH_Object EXTENDS __SYSTEM.IQueryInterface
 ]]></Declaration>
@@ -24,8 +24,7 @@ PROPERTY OID : OTCID ]]></Declaration>
       </Get>
     </Property>
     <Property Name="SortOrderInList" Id="{5be1e675-4272-40f4-9968-0811bf10d9b9}">
-      <Declaration><![CDATA[{attribute 'monitoring':='call'}
-//Optional. Is used in FB_CH_List in the “Sort()” method. The entire list is sorted by ascending number. (small numbers at the beginning)
+      <Declaration><![CDATA[//Optional. Is used in FB_CH_List in the “Sort()” method. The entire list is sorted by ascending number. (small numbers at the beginning)
 PROPERTY SortOrderInList : UDINT]]></Declaration>
       <Get Name="Get" Id="{7e9e1b3d-ed32-4305-8caa-ef852e5c8874}">
         <Declaration><![CDATA[]]></Declaration>

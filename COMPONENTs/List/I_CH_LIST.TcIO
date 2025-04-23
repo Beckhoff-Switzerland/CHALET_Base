@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <Itf Name="I_CH_LIST" Id="{d81cb508-fdd5-4139-a740-4def79be0c9c}">
-    <Declaration><![CDATA[INTERFACE I_CH_LIST
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <Itf Name="I_CH_List" Id="{d81cb508-fdd5-4139-a740-4def79be0c9c}">
+    <Declaration><![CDATA[INTERFACE I_CH_List EXTENDS __SYSTEM.IQueryInterface
+
 ]]></Declaration>
     <Folder Name="Debug" Id="{3f0a098f-0460-439d-a8f7-37aa7612e213}" />
     <Folder Name="ID" Id="{b5bee6b3-f34b-4142-822a-3bcf3bc4785b}" />
